@@ -1,0 +1,237 @@
+ERROR - 2026-09-29 04:10:46 --> Failed to open the referenced table 'pengguna'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 300.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(300): mysqli->query('CREATE TABLE `penilaian` (
+	`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`opd_id` BIGINT(20) UNSIGNED NOT NULL,
+	`periode_id` BIGINT(20) UNSIGNED NOT NULL,
+	`status` ENUM(\'DRAF\',\'DIKIRIM\',\'PERLU_REVISI\',\'TERVERIFIKASI\',\'PERLU_VERIFIKASI_ULANG\') NOT NULL DEFAULT \'DRAF\',
+	`total_skor` DECIMAL(8,2) NULL,
+	`kesimpulan` TEXT NULL,
+	`diajukan_pada` DATETIME NULL,
+	`diverifikasi_pada` DATETIME NULL,
+	`dibuat_oleh` BIGINT(20) UNSIGNED NOT NULL,
+	`diperbarui_oleh` BIGINT(20) UNSIGNED NULL,
+	`dibuat_pada` DATETIME NULL,
+	`diperbarui_pada` DATETIME NULL,
+	CONSTRAINT `pk_penilaian` PRIMARY KEY(`id`),
+	CONSTRAINT `penilaian_opd_id_foreign` FOREIGN KEY (`opd_id`) REFERENCES `perangkat_daerah`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+	CONSTRAINT `penilaian_periode_id_foreign` FOREIGN KEY (`periode_id`) REFERENCES `periode_penilaian`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+	CONSTRAINT `penilaian_dibuat_oleh_foreign` FOREIGN KEY (`dibuat_oleh`) REFERENCES `pengguna`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+	CONSTRAINT `penilaian_diperbarui_oleh_foreign` FOREIGN KEY (`diperbarui_oleh`) REFERENCES `pengguna`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) DEFAULT CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(908): CodeIgniter\Database\MySQLi\Connection->execute('CREATE TABLE `penilaian` (
+	`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`opd_id` BIGINT(20) UNSIGNED NOT NULL,
+	`periode_id` BIGINT(20) UNSIGNED NOT NULL,
+	`status` ENUM(\'DRAF\',\'DIKIRIM\',\'PERLU_REVISI\',\'TERVERIFIKASI\',\'PERLU_VERIFIKASI_ULANG\') NOT NULL DEFAULT \'DRAF\',
+	`total_skor` DECIMAL(8,2) NULL,
+	`kesimpulan` TEXT NULL,
+	`diajukan_pada` DATETIME NULL,
+	`diverifikasi_pada` DATETIME NULL,
+	`dibuat_oleh` BIGINT(20) UNSIGNED NOT NULL,
+	`diperbarui_oleh` BIGINT(20) UNSIGNED NULL,
+	`dibuat_pada` DATETIME NULL,
+	`diperbarui_pada` DATETIME NULL,
+	CONSTRAINT `pk_penilaian` PRIMARY KEY(`id`),
+	CONSTRAINT `penilaian_opd_id_foreign` FOREIGN KEY (`opd_id`) REFERENCES `perangkat_daerah`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+	CONSTRAINT `penilaian_periode_id_foreign` FOREIGN KEY (`periode_id`) REFERENCES `periode_penilaian`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+	CONSTRAINT `penilaian_dibuat_oleh_foreign` FOREIGN KEY (`dibuat_oleh`) REFERENCES `pengguna`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+	CONSTRAINT `penilaian_diperbarui_oleh_foreign` FOREIGN KEY (`diperbarui_oleh`) REFERENCES `pengguna`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) DEFAULT CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci')
+ 3 SYSTEMPATH\Database\BaseConnection.php(825): CodeIgniter\Database\BaseConnection->simpleQuery('CREATE TABLE `penilaian` (
+	`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`opd_id` BIGINT(20) UNSIGNED NOT NULL,
+	`periode_id` BIGINT(20) UNSIGNED NOT NULL,
+	`status` ENUM(\'DRAF\',\'DIKIRIM\',\'PERLU_REVISI\',\'TERVERIFIKASI\',\'PERLU_VERIFIKASI_ULANG\') NOT NULL DEFAULT \'DRAF\',
+	`total_skor` DECIMAL(8,2) NULL,
+	`kesimpulan` TEXT NULL,
+	`diajukan_pada` DATETIME NULL,
+	`diverifikasi_pada` DATETIME NULL,
+	`dibuat_oleh` BIGINT(20) UNSIGNED NOT NULL,
+	`diperbarui_oleh` BIGINT(20) UNSIGNED NULL,
+	`dibuat_pada` DATETIME NULL,
+	`diperbarui_pada` DATETIME NULL,
+	CONSTRAINT `pk_penilaian` PRIMARY KEY(`id`),
+	CONSTRAINT `penilaian_opd_id_foreign` FOREIGN KEY (`opd_id`) REFERENCES `perangkat_daerah`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+	CONSTRAINT `penilaian_periode_id_foreign` FOREIGN KEY (`periode_id`) REFERENCES `periode_penilaian`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+	CONSTRAINT `penilaian_dibuat_oleh_foreign` FOREIGN KEY (`dibuat_oleh`) REFERENCES `pengguna`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+	CONSTRAINT `penilaian_diperbarui_oleh_foreign` FOREIGN KEY (`diperbarui_oleh`) REFERENCES `pengguna`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) DEFAULT CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci')
+ 4 SYSTEMPATH\Database\Forge.php(570): CodeIgniter\Database\BaseConnection->query('CREATE TABLE `penilaian` (
+	`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`opd_id` BIGINT(20) UNSIGNED NOT NULL,
+	`periode_id` BIGINT(20) UNSIGNED NOT NULL,
+	`status` ENUM(\'DRAF\',\'DIKIRIM\',\'PERLU_REVISI\',\'TERVERIFIKASI\',\'PERLU_VERIFIKASI_ULANG\') NOT NULL DEFAULT \'DRAF\',
+	`total_skor` DECIMAL(8,2) NULL,
+	`kesimpulan` TEXT NULL,
+	`diajukan_pada` DATETIME NULL,
+	`diverifikasi_pada` DATETIME NULL,
+	`dibuat_oleh` BIGINT(20) UNSIGNED NOT NULL,
+	`diperbarui_oleh` BIGINT(20) UNSIGNED NULL,
+	`dibuat_pada` DATETIME NULL,
+	`diperbarui_pada` DATETIME NULL,
+	CONSTRAINT `pk_penilaian` PRIMARY KEY(`id`),
+	CONSTRAINT `penilaian_opd_id_foreign` FOREIGN KEY (`opd_id`) REFERENCES `perangkat_daerah`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+	CONSTRAINT `penilaian_periode_id_foreign` FOREIGN KEY (`periode_id`) REFERENCES `periode_penilaian`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+	CONSTRAINT `penilaian_dibuat_oleh_foreign` FOREIGN KEY (`dibuat_oleh`) REFERENCES `pengguna`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+	CONSTRAINT `penilaian_diperbarui_oleh_foreign` FOREIGN KEY (`diperbarui_oleh`) REFERENCES `pengguna`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) DEFAULT CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci')
+ 5 APPPATH\Database\Migrations\2026-09-29-040623_CreatePenilaianTable.php(75): CodeIgniter\Database\Forge->createTable('penilaian')
+ 6 SYSTEMPATH\Database\MigrationRunner.php(1014): App\Database\Migrations\CreatePenilaianTable->up()
+ 7 SYSTEMPATH\Database\MigrationRunner.php(202): CodeIgniter\Database\MigrationRunner->migrate('up', Object(stdClass))
+ 8 SYSTEMPATH\Commands\Database\Migrate.php(89): CodeIgniter\Database\MigrationRunner->latest(null)
+ 9 SYSTEMPATH\CLI\SignalTrait.php(245): CodeIgniter\Commands\Database\Migrate::CodeIgniter\Commands\Database\{closure}()
+10 SYSTEMPATH\Commands\Database\Migrate.php(88): CodeIgniter\Commands\Database\Migrate->withSignalsBlocked(Object(Closure))
+11 SYSTEMPATH\CLI\Commands.php(72): CodeIgniter\Commands\Database\Migrate->run([])
+12 SYSTEMPATH\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('migrate', [])
+13 SYSTEMPATH\Boot.php(444): CodeIgniter\CLI\Console->run()
+14 SYSTEMPATH\Boot.php(166): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
+15 ROOTPATH\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
+ERROR - 2026-09-29 04:14:16 --> Failed to open the referenced table 'pengguna'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 300.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(300): mysqli->query('CREATE TABLE `penilaian` (
+	`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`opd_id` BIGINT(20) UNSIGNED NOT NULL,
+	`periode_id` BIGINT(20) UNSIGNED NOT NULL,
+	`status` ENUM(\'DRAF\',\'DIKIRIM\',\'PERLU_REVISI\',\'TERVERIFIKASI\',\'PERLU_VERIFIKASI_ULANG\') NOT NULL DEFAULT \'DRAF\',
+	`total_skor` DECIMAL(8,2) NULL,
+	`kesimpulan` TEXT NULL,
+	`diajukan_pada` DATETIME NULL,
+	`diverifikasi_pada` DATETIME NULL,
+	`dibuat_oleh` BIGINT(20) UNSIGNED NOT NULL,
+	`diperbarui_oleh` BIGINT(20) UNSIGNED NULL,
+	`dibuat_pada` DATETIME NULL,
+	`diperbarui_pada` DATETIME NULL,
+	CONSTRAINT `pk_penilaian` PRIMARY KEY(`id`),
+	CONSTRAINT `penilaian_opd_id_foreign` FOREIGN KEY (`opd_id`) REFERENCES `perangkat_daerah`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+	CONSTRAINT `penilaian_periode_id_foreign` FOREIGN KEY (`periode_id`) REFERENCES `periode_penilaian`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+	CONSTRAINT `penilaian_dibuat_oleh_foreign` FOREIGN KEY (`dibuat_oleh`) REFERENCES `pengguna`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+	CONSTRAINT `penilaian_diperbarui_oleh_foreign` FOREIGN KEY (`diperbarui_oleh`) REFERENCES `pengguna`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) DEFAULT CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(908): CodeIgniter\Database\MySQLi\Connection->execute('CREATE TABLE `penilaian` (
+	`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`opd_id` BIGINT(20) UNSIGNED NOT NULL,
+	`periode_id` BIGINT(20) UNSIGNED NOT NULL,
+	`status` ENUM(\'DRAF\',\'DIKIRIM\',\'PERLU_REVISI\',\'TERVERIFIKASI\',\'PERLU_VERIFIKASI_ULANG\') NOT NULL DEFAULT \'DRAF\',
+	`total_skor` DECIMAL(8,2) NULL,
+	`kesimpulan` TEXT NULL,
+	`diajukan_pada` DATETIME NULL,
+	`diverifikasi_pada` DATETIME NULL,
+	`dibuat_oleh` BIGINT(20) UNSIGNED NOT NULL,
+	`diperbarui_oleh` BIGINT(20) UNSIGNED NULL,
+	`dibuat_pada` DATETIME NULL,
+	`diperbarui_pada` DATETIME NULL,
+	CONSTRAINT `pk_penilaian` PRIMARY KEY(`id`),
+	CONSTRAINT `penilaian_opd_id_foreign` FOREIGN KEY (`opd_id`) REFERENCES `perangkat_daerah`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+	CONSTRAINT `penilaian_periode_id_foreign` FOREIGN KEY (`periode_id`) REFERENCES `periode_penilaian`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+	CONSTRAINT `penilaian_dibuat_oleh_foreign` FOREIGN KEY (`dibuat_oleh`) REFERENCES `pengguna`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+	CONSTRAINT `penilaian_diperbarui_oleh_foreign` FOREIGN KEY (`diperbarui_oleh`) REFERENCES `pengguna`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) DEFAULT CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci')
+ 3 SYSTEMPATH\Database\BaseConnection.php(825): CodeIgniter\Database\BaseConnection->simpleQuery('CREATE TABLE `penilaian` (
+	`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`opd_id` BIGINT(20) UNSIGNED NOT NULL,
+	`periode_id` BIGINT(20) UNSIGNED NOT NULL,
+	`status` ENUM(\'DRAF\',\'DIKIRIM\',\'PERLU_REVISI\',\'TERVERIFIKASI\',\'PERLU_VERIFIKASI_ULANG\') NOT NULL DEFAULT \'DRAF\',
+	`total_skor` DECIMAL(8,2) NULL,
+	`kesimpulan` TEXT NULL,
+	`diajukan_pada` DATETIME NULL,
+	`diverifikasi_pada` DATETIME NULL,
+	`dibuat_oleh` BIGINT(20) UNSIGNED NOT NULL,
+	`diperbarui_oleh` BIGINT(20) UNSIGNED NULL,
+	`dibuat_pada` DATETIME NULL,
+	`diperbarui_pada` DATETIME NULL,
+	CONSTRAINT `pk_penilaian` PRIMARY KEY(`id`),
+	CONSTRAINT `penilaian_opd_id_foreign` FOREIGN KEY (`opd_id`) REFERENCES `perangkat_daerah`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+	CONSTRAINT `penilaian_periode_id_foreign` FOREIGN KEY (`periode_id`) REFERENCES `periode_penilaian`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+	CONSTRAINT `penilaian_dibuat_oleh_foreign` FOREIGN KEY (`dibuat_oleh`) REFERENCES `pengguna`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+	CONSTRAINT `penilaian_diperbarui_oleh_foreign` FOREIGN KEY (`diperbarui_oleh`) REFERENCES `pengguna`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) DEFAULT CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci')
+ 4 SYSTEMPATH\Database\Forge.php(570): CodeIgniter\Database\BaseConnection->query('CREATE TABLE `penilaian` (
+	`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`opd_id` BIGINT(20) UNSIGNED NOT NULL,
+	`periode_id` BIGINT(20) UNSIGNED NOT NULL,
+	`status` ENUM(\'DRAF\',\'DIKIRIM\',\'PERLU_REVISI\',\'TERVERIFIKASI\',\'PERLU_VERIFIKASI_ULANG\') NOT NULL DEFAULT \'DRAF\',
+	`total_skor` DECIMAL(8,2) NULL,
+	`kesimpulan` TEXT NULL,
+	`diajukan_pada` DATETIME NULL,
+	`diverifikasi_pada` DATETIME NULL,
+	`dibuat_oleh` BIGINT(20) UNSIGNED NOT NULL,
+	`diperbarui_oleh` BIGINT(20) UNSIGNED NULL,
+	`dibuat_pada` DATETIME NULL,
+	`diperbarui_pada` DATETIME NULL,
+	CONSTRAINT `pk_penilaian` PRIMARY KEY(`id`),
+	CONSTRAINT `penilaian_opd_id_foreign` FOREIGN KEY (`opd_id`) REFERENCES `perangkat_daerah`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+	CONSTRAINT `penilaian_periode_id_foreign` FOREIGN KEY (`periode_id`) REFERENCES `periode_penilaian`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+	CONSTRAINT `penilaian_dibuat_oleh_foreign` FOREIGN KEY (`dibuat_oleh`) REFERENCES `pengguna`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+	CONSTRAINT `penilaian_diperbarui_oleh_foreign` FOREIGN KEY (`diperbarui_oleh`) REFERENCES `pengguna`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) DEFAULT CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci')
+ 5 APPPATH\Database\Migrations\2026-09-29-040623_CreatePenilaianTable.php(75): CodeIgniter\Database\Forge->createTable('penilaian')
+ 6 SYSTEMPATH\Database\MigrationRunner.php(1014): App\Database\Migrations\CreatePenilaianTable->up()
+ 7 SYSTEMPATH\Database\MigrationRunner.php(202): CodeIgniter\Database\MigrationRunner->migrate('up', Object(stdClass))
+ 8 SYSTEMPATH\Commands\Database\Migrate.php(89): CodeIgniter\Database\MigrationRunner->latest(null)
+ 9 SYSTEMPATH\CLI\SignalTrait.php(245): CodeIgniter\Commands\Database\Migrate::CodeIgniter\Commands\Database\{closure}()
+10 SYSTEMPATH\Commands\Database\Migrate.php(88): CodeIgniter\Commands\Database\Migrate->withSignalsBlocked(Object(Closure))
+11 SYSTEMPATH\CLI\Commands.php(72): CodeIgniter\Commands\Database\Migrate->run([])
+12 SYSTEMPATH\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('migrate', [])
+13 SYSTEMPATH\Boot.php(444): CodeIgniter\CLI\Console->run()
+14 SYSTEMPATH\Boot.php(166): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
+15 ROOTPATH\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
+CRITICAL - 2026-09-29 06:56:42 --> ErrorException: Cannot declare class Modules\Auth\Controllers\AuthController, because the name is already in use
+[Method: GET, Route: login]
+in APPPATH\Modules\Auth\Controllers\AuthController.php on line 8.
+ 1 [internal function]: CodeIgniter\Debug\Exceptions->shutdownHandler()
+CRITICAL - 2026-09-29 06:58:12 --> ErrorException: Cannot declare class Modules\Auth\Controllers\AuthController, because the name is already in use
+[Method: GET, Route: login]
+in APPPATH\Modules\Auth\Controllers\AuthController.php on line 8.
+ 1 [internal function]: CodeIgniter\Debug\Exceptions->shutdownHandler()
+CRITICAL - 2026-09-29 07:01:25 --> ErrorException: Cannot redeclare class Modules\Auth\Controllers\AuthController (previously declared in C:\laragon\www\website-organisasi\app\Modules\Auth\Controllers\AuthController.php:8)
+[Method: CLI, Route: routes]
+in APPPATH\Modules\Auth\Controllers\AuthController.php on line 8.
+ 1 [internal function]: CodeIgniter\Debug\Exceptions->shutdownHandler()
+CRITICAL - 2026-09-29 07:10:22 --> ErrorException: Cannot redeclare class Modules\Auth\Controllers\AuthController (previously declared in C:\laragon\www\website-organisasi\app\Modules\Auth\Controllers\AuthController.php:8)
+[Method: CLI, Route: routes]
+in APPPATH\Modules\Auth\Controllers\AuthController.php on line 8.
+ 1 [internal function]: CodeIgniter\Debug\Exceptions->shutdownHandler()
+CRITICAL - 2026-09-29 07:17:01 --> ErrorException: Cannot declare class Modules\Auth\Controllers\AuthController, because the name is already in use
+[Method: GET, Route: login]
+in APPPATH\Modules\Auth\Controllers\AuthController.php on line 8.
+ 1 [internal function]: CodeIgniter\Debug\Exceptions->shutdownHandler()
+CRITICAL - 2026-09-29 07:21:52 --> ErrorException: Cannot declare class Modules\Auth\Controllers\AuthController, because the name is already in use
+[Method: GET, Route: login]
+in APPPATH\Modules\Auth\Controllers\AuthController.php on line 8.
+ 1 [internal function]: CodeIgniter\Debug\Exceptions->shutdownHandler()
+CRITICAL - 2026-09-29 07:21:55 --> ErrorException: Cannot declare class Modules\Auth\Controllers\AuthController, because the name is already in use
+[Method: GET, Route: login]
+in APPPATH\Modules\Auth\Controllers\AuthController.php on line 8.
+ 1 [internal function]: CodeIgniter\Debug\Exceptions->shutdownHandler()
+CRITICAL - 2026-09-29 07:22:09 --> ErrorException: Cannot declare class Modules\Auth\Controllers\AuthController, because the name is already in use
+[Method: GET, Route: login]
+in APPPATH\Modules\Auth\Controllers\AuthController.php on line 8.
+ 1 [internal function]: CodeIgniter\Debug\Exceptions->shutdownHandler()
+CRITICAL - 2026-09-29 07:24:00 --> ErrorException: Cannot declare class Modules\Auth\Controllers\AuthController, because the name is already in use
+[Method: GET, Route: login]
+in APPPATH\Modules\Auth\Controllers\AuthController.php on line 8.
+ 1 [internal function]: CodeIgniter\Debug\Exceptions->shutdownHandler()
+CRITICAL - 2026-09-29 07:24:32 --> ErrorException: Cannot declare class Modules\Auth\Controllers\AuthController, because the name is already in use
+[Method: GET, Route: login]
+in APPPATH\Modules\Auth\Controllers\AuthController.php on line 8.
+ 1 [internal function]: CodeIgniter\Debug\Exceptions->shutdownHandler()
+CRITICAL - 2026-09-29 07:28:25 --> ErrorException: Cannot redeclare class Modules\Auth\Controllers\AuthController (previously declared in C:\laragon\www\website-organisasi\app\Modules\Auth\Controllers\AuthController.php:8)
+[Method: CLI, Route: routes]
+in APPPATH\Modules\Auth\Controllers\AuthController.php on line 8.
+ 1 [internal function]: CodeIgniter\Debug\Exceptions->shutdownHandler()
+CRITICAL - 2026-09-29 07:30:43 --> ErrorException: Cannot declare class Modules\Auth\Controllers\AuthController, because the name is already in use
+[Method: GET, Route: login]
+in APPPATH\Modules\Auth\Controllers\AuthController.php on line 8.
+ 1 [internal function]: CodeIgniter\Debug\Exceptions->shutdownHandler()
+CRITICAL - 2026-09-29 07:35:40 --> ErrorException: Cannot redeclare class Modules\Auth\Controllers\AuthController (previously declared in C:\laragon\www\website-organisasi\app\Modules\Auth\Controllers\AuthController.php:8)
+[Method: CLI, Route: routes]
+in APPPATH\Modules\Auth\Controllers\AuthController.php on line 8.
+ 1 [internal function]: CodeIgniter\Debug\Exceptions->shutdownHandler()
+CRITICAL - 2026-09-29 07:38:03 --> ErrorException: Cannot redeclare class Modules\Auth\Controllers\AuthController (previously declared in C:\laragon\www\website-organisasi\app\Modules\Auth\Controllers\AuthController.php:8)
+[Method: CLI, Route: routes]
+in APPPATH\Modules\Auth\Controllers\AuthController.php on line 8.
+ 1 [internal function]: CodeIgniter\Debug\Exceptions->shutdownHandler()
+DEBUG - 2026-09-29 07:42:50 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-09-29 07:44:15 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-09-29 07:49:11 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.

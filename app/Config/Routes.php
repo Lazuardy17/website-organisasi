@@ -4,9 +4,19 @@ use CodeIgniter\Router\RouteCollection;
 
 /** @var RouteCollection $routes */
 
-$routes->get('/', 'Home::index');
+// ============ PUBLIK ============
+$routes->get('/', '\App\Modules\Landing\Controllers\LandingController::index');
 
-$routes->get('/login', '\App\Modules\Auth\Controllers\AuthController::login');
+// ============ AUTH ============
 $routes->post('/login/attempt', '\App\Modules\Auth\Controllers\AuthController::attemptLogin');
 $routes->get('/logout', '\App\Modules\Auth\Controllers\AuthController::logout');
 
+// ============ DASHBOARD ADMIN ============
+$routes->group('admin', ['filter' => 'auth:admin'], function ($routes) {
+    $routes->get('dashboard', '\App\Modules\Dashboard\Controllers\DashboardController::admin');
+});
+
+// ============ DASHBOARD USER OPD ============
+$routes->group('opd', ['filter' => 'auth:opd'], function ($routes) {
+    $routes->get('dashboard', '\App\Modules\Dashboard\Controllers\DashboardController::opd');
+});

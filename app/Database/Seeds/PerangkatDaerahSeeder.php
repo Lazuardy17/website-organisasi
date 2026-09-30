@@ -8,7 +8,7 @@ class PerangkatDaerahSeeder extends Seeder
 {
     public function run()
     {
-        // 35 OPD Kota Banjarbaru
+        // 32 OPD Kota Banjarbaru
         $data = [
             ['kode' => 'SETDA', 'nama' => 'SEKRETARIAT DAERAH', 'nama_kepala' => 'Sekretaris Daerah', 'status' => 'AKTIF', 'dibuat_pada' => date('Y-m-d H:i:s')],
             ['kode' => 'SETDPRD', 'nama' => 'SEKRETARIAT DPRD', 'nama_kepala' => 'Sekretaris DPRD', 'status' => 'AKTIF', 'dibuat_pada' => date('Y-m-d H:i:s')],

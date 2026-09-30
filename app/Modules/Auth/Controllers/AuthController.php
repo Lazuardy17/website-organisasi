@@ -16,11 +16,17 @@ class AuthController extends BaseController
 
     public function login()
     {
+        // Kalau sudah login, arahkan ke dashboard
         if (session()->get('is_logged_in')) {
-            return redirect()->to('/dashboard');
+            if (session()->get('peran_id') == 1) {
+                return redirect()->to('/admin/dashboard');
+            } else {
+                return redirect()->to('/opd/dashboard');
+            }
         }
 
-        return view('App\Modules\Auth\Views\login');
+        // Kalau belum login, arahkan ke landing page
+        return redirect()->to('/');
     }
 
     public function attemptLogin()
@@ -54,7 +60,11 @@ class AuthController extends BaseController
             'login_terakhir_pada' => date('Y-m-d H:i:s'),
         ]);
 
-        return redirect()->to('/dashboard');
+        if ($user['peran_id'] == 1) {
+            return redirect()->to('/admin/dashboard');
+        } else {
+            return redirect()->to('/opd/dashboard');
+        }
     }
 
     public function logout()

@@ -14,6 +14,7 @@ class DashboardController extends BaseController
             'belum_submit'   => 0,
             'menunggu_verif' => 0,
             'terverifikasi'  => 0,
+            'antrean'        => [], // nanti diisi saat fitur verifikasi jadi
         ];
 
         return view('App\Modules\Dashboard\Views\admin', $data);

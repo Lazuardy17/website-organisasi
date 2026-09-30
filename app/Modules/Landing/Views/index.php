@@ -213,6 +213,35 @@
             font-size: 14px;
         }
 
+        /* Icon toggle password */
+        .input-with-icon {
+            position: relative;
+            margin-bottom: 16px;
+        }
+        .input-with-icon .form-control {
+            padding-right: 45px;
+            margin-bottom: 0;
+        }
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            opacity: 0.6;
+        }
+        .toggle-password:hover {
+            opacity: 1;
+        }
+        .toggle-password.aktif svg {
+            stroke: #dc2626;
+        }
+
         /* Footer */
         footer {
             background: #0d3b66;
@@ -325,7 +354,15 @@
                     <input type="text" name="username" id="username" class="form-control" placeholder="Masukkan Username" required>
 
                     <label for="password" class="form-label">Password</label>
-                    <input type="password" name="password" id="password" class="form-control" placeholder="Masukkan Password" required>
+                    <div class="input-with-icon">
+                        <input type="password" name="password" id="password" class="form-control" placeholder="Masukkan Password" required>
+                        <button type="button" class="toggle-password" onclick="togglePassword('password', this)" title="Lihat password">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0d3b66" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                    </div>
 
                     <button type="submit" class="btn-login">Masuk</button>
                 </form>
@@ -351,29 +388,34 @@
             const tentangView = document.getElementById('tentang-view');
             const loginView   = document.getElementById('login-view');
 
-            // Fungsi untuk menampilkan view "Tentang"
             function showTentang() {
                 tentangView.style.display = 'contents';
                 loginView.style.display   = 'none';
             }
 
-            // Fungsi untuk menampilkan view "Login"
             function showLogin() {
                 tentangView.style.display = 'none';
                 loginView.style.display   = 'contents';
             }
 
-            // 1. Beranda → scroll ke paling atas (hero)
+            <?php if (session()->getFlashdata('error')): ?>
+                showLogin();
+                window.addEventListener('load', function () {
+                    document.getElementById('switch-area').scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                });
+            <?php endif; ?>
+
             navBeranda.addEventListener('click', function (e) {
                 e.preventDefault();
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             });
 
-            // 2. Tentang Penilaian → tampilkan view tentang, lalu scroll ke situ
             navTentang.addEventListener('click', function (e) {
                 e.preventDefault();
                 showTentang();
-
                 setTimeout(function () {
                     document.getElementById('switch-area').scrollIntoView({
                         behavior: 'smooth',
@@ -382,11 +424,9 @@
                 }, 50);
             });
 
-            // 3. Masuk → tampilkan view login, lalu scroll ke situ
             navMasuk.addEventListener('click', function (e) {
                 e.preventDefault();
                 showLogin();
-
                 setTimeout(function () {
                     document.getElementById('switch-area').scrollIntoView({
                         behavior: 'smooth',
@@ -395,6 +435,19 @@
                 }, 50);
             });
         });
+
+        function togglePassword(inputId, button) {
+            const input = document.getElementById(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                button.classList.add('aktif');
+                button.title = 'Sembunyikan password';
+            } else {
+                input.type = 'password';
+                button.classList.remove('aktif');
+                button.title = 'Lihat password';
+            }
+        }
     </script>
 
 </body>

@@ -70,6 +70,55 @@ class AuthController extends BaseController
     public function logout()
     {
         session()->destroy();
-        return redirect()->to('/login');
+        return redirect()->to('/');
+    }
+
+        /* =========================================================
+     * UBAH PASSWORD
+     * ========================================================= */
+
+    public function ubahPassword()
+    {
+        $data = [
+            'title' => 'Ubah Password',
+        ];
+
+        return view('App\Modules\Auth\Views\ubah_password', $data);
+    }
+
+    public function simpanPassword()
+    {
+        $userId         = session()->get('user_id');
+        $passwordLama   = $this->request->getPost('password_lama');
+        $passwordBaru   = $this->request->getPost('password_baru');
+        $konfirmasi     = $this->request->getPost('konfirmasi');
+
+        // ============ Validasi ============
+        if (empty($passwordLama) || empty($passwordBaru) || empty($konfirmasi)) {
+            return redirect()->back()->with('error', 'Semua field wajib diisi.');
+        }
+
+        if (strlen($passwordBaru) < 8) {
+            return redirect()->back()->with('error', 'Password baru minimal 8 karakter.');
+        }
+
+        if ($passwordBaru !== $konfirmasi) {
+            return redirect()->back()->with('error', 'Password baru dan konfirmasi tidak sama.');
+        }
+
+        // ============ Cek password lama ============
+        $user = $this->userModel->find($userId);
+
+        if (!$user || !password_verify($passwordLama, $user['hash_kata_sandi'])) {
+            return redirect()->back()->with('error', 'Password lama salah.');
+        }
+
+        // ============ Simpan password baru ============
+        $this->userModel->update($userId, [
+            'hash_kata_sandi' => password_hash($passwordBaru, PASSWORD_DEFAULT),
+            'diperbarui_pada' => date('Y-m-d H:i:s'),
+        ]);
+
+        return redirect()->to('/ubah-password')->with('success', 'Password berhasil diubah.');
     }
 }

@@ -23,7 +23,7 @@ class AkunOpdController extends BaseController
         $data = [
             'title' => 'Manajemen Akun OPD',
             'akun'  => $this->akunModel
-                ->select('pengguna.*, perangkat_daerah.nama as nama_opd, perangkat_daerah.kode as kode_opd, perangkat_daerah.nama_kepala, perangkat_daerah.nip_kepala')
+                ->select('pengguna.*, perangkat_daerah.nama as nama_opd, perangkat_daerah.kode as kode_opd, perangkat_daerah.nama_kepala, perangkat_daerah.nip_kepala, perangkat_daerah.pangkat_kepala')
                 ->join('perangkat_daerah', 'perangkat_daerah.id = pengguna.opd_id', 'left')
                 ->where('pengguna.peran_id', 2)
                 ->orderBy('perangkat_daerah.nama', 'ASC')
@@ -76,12 +76,13 @@ class AkunOpdController extends BaseController
             return redirect()->back()->with('error', 'OPD tidak ditemukan.')->withInput();
         }
 
-        $nipKepala  = $this->request->getPost('nip_kepala');
-        $namaKepala = $this->request->getPost('nama_kepala');
-        $password   = $this->request->getPost('password');
-        $konfirmasi = $this->request->getPost('konfirmasi');
+        $nipKepala     = $this->request->getPost('nip_kepala');
+        $namaKepala    = $this->request->getPost('nama_kepala');
+        $pangkatKepala = $this->request->getPost('pangkat_kepala');
+        $password      = $this->request->getPost('password');
+        $konfirmasi    = $this->request->getPost('konfirmasi');
 
-        // ============ Validasi ============
+        // ============ Validasi (hanya password yang wajib) ============
         if (empty($password)) {
             return redirect()->back()->with('error', 'Kata sandi wajib diisi.')->withInput();
         }
@@ -94,20 +95,13 @@ class AkunOpdController extends BaseController
             return redirect()->back()->with('error', 'Kata sandi dan konfirmasi tidak sama.')->withInput();
         }
 
-        if (empty($nipKepala)) {
-            return redirect()->back()->with('error', 'NIP wajib diisi.')->withInput();
-        }
-
-        if (empty($namaKepala)) {
-            return redirect()->back()->with('error', 'Nama Kepala OPD wajib diisi.')->withInput();
-        }
-
         // ============ Update perangkat_daerah ============
         $db->table('perangkat_daerah')
             ->where('id', $opdId)
             ->update([
-                'nip_kepala'      => $nipKepala,
-                'nama_kepala'     => $namaKepala,
+                'nip_kepala'      => $nipKepala ?: null,
+                'nama_kepala'     => $namaKepala ?: null,
+                'pangkat_kepala'  => $pangkatKepala ?: null,
                 'diperbarui_pada' => date('Y-m-d H:i:s'),
             ]);
 
@@ -162,7 +156,7 @@ class AkunOpdController extends BaseController
     public function edit($id)
     {
         $akun = $this->akunModel
-            ->select('pengguna.*, perangkat_daerah.nama as nama_opd, perangkat_daerah.kode as kode_opd, perangkat_daerah.nama_kepala, perangkat_daerah.nip_kepala')
+            ->select('pengguna.*, perangkat_daerah.nama as nama_opd, perangkat_daerah.kode as kode_opd, perangkat_daerah.nama_kepala, perangkat_daerah.nip_kepala, perangkat_daerah.pangkat_kepala')
             ->join('perangkat_daerah', 'perangkat_daerah.id = pengguna.opd_id', 'left')
             ->where('pengguna.id', $id)
             ->first();
@@ -185,28 +179,21 @@ class AkunOpdController extends BaseController
             return redirect()->to('/admin/akun-opd')->with('error', 'Akun tidak ditemukan.');
         }
 
-        $namaPengguna = trim($this->request->getPost('nama_pengguna'));
-        $namaOpd      = trim($this->request->getPost('nama_opd'));
-        $nipKepala    = $this->request->getPost('nip_kepala');
-        $namaKepala   = $this->request->getPost('nama_kepala');
-        $password     = $this->request->getPost('password');
-        $konfirmasi   = $this->request->getPost('konfirmasi');
+        $namaPengguna  = trim($this->request->getPost('nama_pengguna'));
+        $namaOpd       = trim($this->request->getPost('nama_opd'));
+        $nipKepala     = $this->request->getPost('nip_kepala');
+        $namaKepala    = $this->request->getPost('nama_kepala');
+        $pangkatKepala = $this->request->getPost('pangkat_kepala');
+        $password      = $this->request->getPost('password');
+        $konfirmasi    = $this->request->getPost('konfirmasi');
 
-        // ============ Validasi ============
+        // Validasi
         if (empty($namaPengguna)) {
             return redirect()->back()->with('error', 'Username wajib diisi.')->withInput();
         }
 
         if (empty($namaOpd)) {
             return redirect()->back()->with('error', 'Nama OPD wajib diisi.')->withInput();
-        }
-
-        if (empty($nipKepala)) {
-            return redirect()->back()->with('error', 'NIP wajib diisi.')->withInput();
-        }
-
-        if (empty($namaKepala)) {
-            return redirect()->back()->with('error', 'Nama Kepala OPD wajib diisi.')->withInput();
         }
 
         // Cek username unik
@@ -218,7 +205,7 @@ class AkunOpdController extends BaseController
             return redirect()->back()->with('error', 'Username sudah dipakai akun lain.')->withInput();
         }
 
-        // Validasi password (HANYA kalau diisi)
+        // Validasi password (hanya kalau diisi)
         if (!empty($password)) {
             if (strlen($password) < 8) {
                 return redirect()->back()->with('error', 'Kata sandi minimal 8 karakter.')->withInput();
@@ -235,8 +222,9 @@ class AkunOpdController extends BaseController
                 ->where('id', $akun['opd_id'])
                 ->update([
                     'nama'            => $namaOpd,
-                    'nip_kepala'      => $nipKepala,
-                    'nama_kepala'     => $namaKepala,
+                    'nip_kepala'      => $nipKepala ?: null,
+                    'nama_kepala'     => $namaKepala ?: null,
+                    'pangkat_kepala'  => $pangkatKepala ?: null,
                     'diperbarui_pada' => date('Y-m-d H:i:s'),
                 ]);
         }

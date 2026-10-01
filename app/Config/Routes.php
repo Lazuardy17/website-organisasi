@@ -11,6 +11,10 @@ $routes->get('/', '\App\Modules\Landing\Controllers\LandingController::index');
 $routes->post('/login/attempt', '\App\Modules\Auth\Controllers\AuthController::attemptLogin');
 $routes->get('/logout', '\App\Modules\Auth\Controllers\AuthController::logout');
 
+// ============ UBAH PASSWORD (Admin & User OPD) ============
+$routes->get('/ubah-password', '\App\Modules\Auth\Controllers\AuthController::ubahPassword', ['filter' => 'auth']);
+$routes->post('/ubah-password/simpan', '\App\Modules\Auth\Controllers\AuthController::simpanPassword', ['filter' => 'auth']);
+
 // ============ DASHBOARD ADMIN ============
 $routes->group('admin', ['filter' => 'auth:admin'], function ($routes) {
     $routes->get('dashboard', '\App\Modules\Dashboard\Controllers\DashboardController::admin');
@@ -29,8 +33,16 @@ $routes->group('admin', ['filter' => 'auth:admin'], function ($routes) {
 // ============ DASHBOARD USER OPD ============
 $routes->group('opd', ['filter' => 'auth:opd'], function ($routes) {
     $routes->get('dashboard', '\App\Modules\Dashboard\Controllers\DashboardController::opd');
-});
 
-// ============ UBAH PASSWORD (Admin & User OPD) ============
-$routes->get('/ubah-password', '\App\Modules\Auth\Controllers\AuthController::ubahPassword', ['filter' => 'auth']);
-$routes->post('/ubah-password/simpan', '\App\Modules\Auth\Controllers\AuthController::simpanPassword', ['filter' => 'auth']);
+    // Form Identitas (Evaluasi Kematangan Kelembagaan)
+    $routes->get('identitas', '\App\Modules\OPD\Controllers\IdentitasController::index');
+    $routes->post('identitas/simpan', '\App\Modules\OPD\Controllers\IdentitasController::simpan');
+
+    // Pengisian Variabel
+    $routes->get('penilaian', '\App\Modules\Penilaian\Controllers\PenilaianController::index');
+    $routes->post('penilaian/simpan/(:num)', '\App\Modules\Penilaian\Controllers\PenilaianController::simpan/$1');
+
+    // Kesimpulan & Submit
+    $routes->get('kesimpulan', '\App\Modules\Penilaian\Controllers\KesimpulanController::index');
+    $routes->post('kesimpulan/submit', '\App\Modules\Penilaian\Controllers\KesimpulanController::submit');
+});

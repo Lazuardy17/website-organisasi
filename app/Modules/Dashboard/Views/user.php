@@ -44,10 +44,10 @@
 
             <div class="section-title">Akun & Evaluasi</div>
             <a href="#">👤 Akun</a>
-            <a href="#">📋 Pengisian Variabel</a>
+            <a href="<?= base_url('/opd/penilaian') ?>">📋 Pengisian Variabel</a>
 
             <div class="section-title">Pelaporan</div>
-            <a href="#">📁 Kesimpulan</a>
+            <a href="<?= base_url('/opd/kesimpulan') ?>">📁 Kesimpulan</a>
 
             <div class="section-title">Pengaturan</div>
             <a href="<?= base_url('/ubah-password') ?>">🔒 Ubah Password</a>

@@ -64,7 +64,7 @@
             <a href="#">📈 Rekapitulasi Data</a>
             <a href="#">📥 Ekspor Laporan</a>
             <div class="section-title">Pengaturan</div>
-            <a href="#">🔒 Ubah Password</a>
+            <a href="<?= base_url('/ubah-password') ?>">🔒 Ubah Password</a>
             <a href="<?= base_url('/logout') ?>" class="logout">Logout</a>
         </aside>
 
@@ -91,13 +91,14 @@
             <div class="card" style="overflow-x: auto;">
                 <table style="table-layout: fixed; width: 100%;">
                     <colgroup>
-                        <col style="width: 30%;">   <!-- Nama OPD -->
-                        <col style="width: 14%;">   <!-- Username -->
-                        <col style="width: 10%;">   <!-- NIP -->
-                        <col style="width: 16%;">   <!-- Kepala PD -->
-                        <col style="width: 10%;">   <!-- Password -->
-                        <col style="width: 10%;">   <!-- Status -->
-                        <col style="width: 10%;">   <!-- Aksi -->
+                        <col style="width: 22%;">   <!-- Nama OPD -->
+                        <col style="width: 12%;">   <!-- Username -->
+                        <col style="width: 18%;">   <!-- NIP -->
+                        <col style="width: 14%;">   <!-- Kepala PD -->
+                        <col style="width: 12%;">   <!-- Pangkat/Golongan -->
+                        <col style="width: 8%;">   <!-- Password -->
+                        <col style="width: 7%;">   <!-- Status -->
+                        <col style="width: 7%;">    <!-- Aksi -->
                     </colgroup>
                     <thead>
                         <tr>
@@ -105,6 +106,7 @@
                             <th>Username</th>
                             <th>NIP</th>
                             <th>Kepala PD</th>
+                            <th>Pangkat/Gol.</th>
                             <th>Password</th>
                             <th>Status</th>
                             <th>Aksi</th>
@@ -112,14 +114,15 @@
                     </thead>
                     <tbody>
                         <?php if (empty($akun)): ?>
-                            <tr><td colspan="7" style="text-align:center; color:#6b7280;">Belum ada akun OPD.</td></tr>
+                            <tr><td colspan="8" style="text-align:center; color:#6b7280;">Belum ada akun OPD.</td></tr>
                         <?php else: ?>
                             <?php foreach ($akun as $a): ?>
                                 <tr>
                                     <td><?= esc($a['nama_opd']) ?></td>
                                     <td><?= esc($a['nama_pengguna']) ?></td>
-                                    <td><?= esc($a['nip_kepala'] ?? '-') ?></td>
-                                    <td><?= esc($a['nama_kepala'] ?? '-') ?></td>
+                                    <td><?= esc($a['nip_kepala'] ?? '') ?></td>
+                                    <td><?= esc($a['nama_kepala'] ?? '') ?></td>
+                                    <td><?= esc($a['pangkat_kepala'] ?? '') ?></td>
                                     <td>••••••••</td>
                                     <td>
                                         <span class="badge <?= $a['status'] === 'AKTIF' ? 'badge-aktif' : 'badge-inaktif' ?>">

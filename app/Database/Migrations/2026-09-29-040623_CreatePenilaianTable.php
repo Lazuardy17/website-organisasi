@@ -27,8 +27,8 @@ class CreatePenilaianTable extends Migration
             ],
             'status' => [
                 'type'       => 'ENUM',
-                'constraint' => ['DRAF', 'DIKIRIM', 'PERLU_REVISI', 'TERVERIFIKASI', 'PERLU_VERIFIKASI_ULANG'],
-                'default'    => 'DRAF',
+                'constraint' => ['DRAFT', 'DIKIRIM', 'PERLU_REVISI', 'TERVERIFIKASI', 'PERLU_VERIFIKASI_ULANG'],
+                'default'    => 'DRAFT',
             ],
             'total_skor' => [
                 'type'       => 'DECIMAL',

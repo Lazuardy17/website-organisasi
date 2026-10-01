@@ -67,7 +67,7 @@
             <a href="#">📈 Rekapitulasi Data</a>
             <a href="#">📥 Ekspor Laporan</a>
             <div class="section-title">Pengaturan</div>
-            <a href="#">🔒 Ubah Password</a>
+            <a href="<?= base_url('/ubah-password') ?>">🔒 Ubah Password</a>
             <a href="<?= base_url('/logout') ?>" class="logout">Logout</a>
         </aside>
 
@@ -94,12 +94,17 @@
 
                     <div class="form-group">
                         <label for="nip_kepala">NIP</label>
-                        <input type="text" name="nip_kepala" id="nip_kepala" class="form-control" value="<?= esc($akun['nip_kepala'] ?? '') ?>" required>
+                        <input type="text" name="nip_kepala" id="nip_kepala" class="form-control" value="<?= esc($akun['nip_kepala'] ?? '') ?>" placeholder="Nomor Induk Pegawai">
                     </div>
 
                     <div class="form-group">
                         <label for="nama_kepala">Kepala OPD</label>
-                        <input type="text" name="nama_kepala" id="nama_kepala" class="form-control" value="<?= esc($akun['nama_kepala'] ?? '') ?>" required>
+                        <input type="text" name="nama_kepala" id="nama_kepala" class="form-control" value="<?= esc($akun['nama_kepala'] ?? '') ?>" placeholder="Nama lengkap Kepala OPD">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pangkat_kepala">Pangkat/Golongan</label>
+                        <input type="text" name="pangkat_kepala" id="pangkat_kepala" class="form-control" value="<?= esc($akun['pangkat_kepala'] ?? '') ?>" placeholder="Cth: Pembina / IV a">
                     </div>
 
                     <div class="form-group">

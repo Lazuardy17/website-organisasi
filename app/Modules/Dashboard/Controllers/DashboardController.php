@@ -14,7 +14,7 @@ class DashboardController extends BaseController
             'belum_submit'   => 0,
             'menunggu_verif' => 0,
             'terverifikasi'  => 0,
-            'antrean'        => [], // nanti diisi saat fitur verifikasi jadi
+            'antrean'        => [],
         ];
 
         return view('App\Modules\Dashboard\Views\admin', $data);
@@ -22,6 +22,16 @@ class DashboardController extends BaseController
 
     public function opd()
     {
+        // Cek identitas lengkap
+        $db  = \Config\Database::connect();
+        $opd = $db->table('perangkat_daerah')
+            ->where('id', session()->get('opd_id'))
+            ->get()->getRowArray();
+
+        if ($opd && empty($opd['identitas_lengkap'])) {
+            return redirect()->to('/opd/identitas')->with('error', 'Lengkapi identitas terlebih dahulu.');
+        }
+
         $data = [
             'title'          => 'Dashboard OPD',
             'total_variabel' => 11,

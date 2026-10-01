@@ -67,7 +67,7 @@
             <a href="#">📈 Rekapitulasi Data</a>
             <a href="#">📥 Ekspor Laporan</a>
             <div class="section-title">Pengaturan</div>
-            <a href="#">🔒 Ubah Password</a>
+            <a href="<?= base_url('/ubah-password') ?>">🔒 Ubah Password</a>
             <a href="<?= base_url('/logout') ?>" class="logout">Logout</a>
         </aside>
 
@@ -94,18 +94,23 @@
 
                     <div class="form-group">
                         <label for="nip_kepala">NIP</label>
-                        <input type="text" name="nip_kepala" id="nip_kepala" class="form-control" placeholder="Nomor Induk Pegawai" required>
+                        <input type="text" name="nip_kepala" id="nip_kepala" class="form-control" placeholder="Nomor Induk Pegawai">
                     </div>
 
                     <div class="form-group">
                         <label for="nama_kepala">Kepala OPD</label>
-                        <input type="text" name="nama_kepala" id="nama_kepala" class="form-control" placeholder="Nama lengkap Kepala OPD" required>
+                        <input type="text" name="nama_kepala" id="nama_kepala" class="form-control" placeholder="Nama lengkap Kepala OPD">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pangkat_kepala">Pangkat/Golongan</label>
+                        <input type="text" name="pangkat_kepala" id="pangkat_kepala" class="form-control" placeholder="Cth: Pembina / IV a">
                     </div>
 
                     <div class="form-group">
                         <label for="password">Kata Sandi</label>
                         <div class="input-with-icon">
-                            <input type="text" name="password" id="password" class="form-control" placeholder="Ketik kata sandi" required minlength="8">
+                            <input type="text" name="password" id="password" class="form-control" placeholder="Ketik kata sandi, atau klik 🎲" required minlength="8">
                             <button type="button" class="icon-btn" id="btn-dadu" title="Generate password random">🎲</button>
                         </div>
                         <small style="color:#6b7280; font-size:12px; display:block; margin-top:6px;">Minimal 8 karakter. Klik 🎲 untuk generate otomatis.</small>

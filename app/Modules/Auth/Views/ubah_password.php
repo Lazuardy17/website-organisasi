@@ -81,12 +81,12 @@
                 <div class="section-title">Penilaian</div>
                 <a href="<?= base_url('/admin/verifikasi') ?>">📝 Verifikasi Penilaian</a>
                 <div class="section-title">Pelaporan</div>
-                <a href="#">📈 Rekapitulasi Data</a>
+                <a href="<?= base_url('/admin/rekapitulasi') ?>">📈 Rekapitulasi Data</a>
                 <a href="#">📥 Ekspor Laporan</a>
             <?php else: ?>
                 <a href="<?= base_url('/opd/dashboard') ?>">📊 Dashboard</a>
                 <div class="section-title">Akun & Evaluasi</div>
-                <a href="#">👤 Akun</a>
+                <a href="<?= base_url('/opd/akun') ?>">👤 Akun</a>
                 <a href="#">📋 Pengisian Variabel</a>
                 <div class="section-title">Pelaporan</div>
                 <a href="#">📁 Kesimpulan</a>

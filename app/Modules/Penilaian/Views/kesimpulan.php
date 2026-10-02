@@ -76,7 +76,7 @@
             </div>
             <a href="<?= base_url('/opd/dashboard') ?>">📊 Dashboard</a>
             <div class="section-title">Akun & Evaluasi</div>
-            <a href="#">👤 Akun</a>
+            <a href="<?= base_url('/opd/akun') ?>">👤 Akun</a>
             <a href="<?= base_url('/opd/penilaian') ?>">📋 Pengisian Variabel</a>
             <div class="section-title">Pelaporan</div>
             <a href="<?= base_url('/opd/kesimpulan') ?>" class="active">📁 Kesimpulan</a>

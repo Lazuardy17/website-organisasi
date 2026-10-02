@@ -34,11 +34,18 @@ $routes->group('admin', ['filter' => 'auth:admin'], function ($routes) {
     $routes->get('verifikasi/detail/(:num)', '\App\Modules\Verifikasi\Controllers\VerifikasiController::detail/$1');
     $routes->post('verifikasi/verifikasi/(:num)', '\App\Modules\Verifikasi\Controllers\VerifikasiController::verifikasi/$1');
     $routes->post('verifikasi/revisi/(:num)', '\App\Modules\Verifikasi\Controllers\VerifikasiController::revisi/$1');
+
+    // Rekapitulasi
+    $routes->get('rekapitulasi', '\App\Modules\Rekapitulasi\Controllers\RekapitulasiController::index');
 });
 
 // ============ DASHBOARD USER OPD ============
 $routes->group('opd', ['filter' => 'auth:opd'], function ($routes) {
     $routes->get('dashboard', '\App\Modules\Dashboard\Controllers\DashboardController::opd');
+
+    // Akun OPD
+    $routes->get('akun', '\App\Modules\OPD\Controllers\AkunController::index');
+    $routes->post('akun/update', '\App\Modules\OPD\Controllers\AkunController::update');
 
     // Form Identitas (Evaluasi Kematangan Kelembagaan)
     $routes->get('identitas', '\App\Modules\OPD\Controllers\IdentitasController::index');

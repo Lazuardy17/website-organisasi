@@ -61,7 +61,7 @@
             <div class="section-title">Penilaian</div>
             <a href="<?= base_url('/admin/verifikasi') ?>">📝 Verifikasi Penilaian</a>
             <div class="section-title">Pelaporan</div>
-            <a href="#">📈 Rekapitulasi Data</a>
+            <a href="<?= base_url('/admin/rekapitulasi') ?>">📈 Rekapitulasi Data</a>
             <a href="#">📥 Ekspor Laporan</a>
             <div class="section-title">Pengaturan</div>
             <a href="<?= base_url('/ubah-password') ?>">🔒 Ubah Password</a>

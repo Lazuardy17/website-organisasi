@@ -82,7 +82,7 @@
                 <a href="<?= base_url('/admin/verifikasi') ?>">📝 Verifikasi Penilaian</a>
                 <div class="section-title">Pelaporan</div>
                 <a href="<?= base_url('/admin/rekapitulasi') ?>">📈 Rekapitulasi Data</a>
-                <a href="#">📥 Ekspor Laporan</a>
+                <a href="<?= base_url('/admin/laporan') ?>">📥 Ekspor Laporan</a>
             <?php else: ?>
                 <a href="<?= base_url('/opd/dashboard') ?>">📊 Dashboard</a>
                 <div class="section-title">Akun & Evaluasi</div>

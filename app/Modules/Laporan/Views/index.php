@@ -19,20 +19,18 @@
         .sidebar .logout { margin: 20px; padding: 10px 20px; border: 1px solid #fff; border-radius: 8px; text-align: center; font-weight: 600; }
         .content { flex: 1; padding: 24px 32px; }
         .content h1 { color: #0d3b66; font-size: 24px; margin-bottom: 20px; }
-        .card { background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        table { width: 100%; border-collapse: collapse; }
-        th { color: #0d3b66; text-align: left; padding: 12px 8px; border-bottom: 2px solid #e5e7eb; font-size: 14px; }
-        td { padding: 12px 8px; border-bottom: 1px solid #e5e7eb; font-size: 14px; }
-        .badge { display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; }
-        .badge-dikirim { background: #dbeafe; color: #1e40af; }
-        .badge-verif-ulang { background: #fef3c7; color: #92400e; }
-        .btn { display: inline-block; padding: 6px 16px; border-radius: 8px; text-decoration: none; font-size: 12px; font-weight: 600; color: #fff; border: none; cursor: pointer; }
+        .card { background: #fff; border-radius: 12px; padding: 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); max-width: 700px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; color: #0d3b66; font-weight: 600; font-size: 14px; margin-bottom: 8px; }
+        .form-control { width: 100%; padding: 10px 14px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; outline: none; background: #fff; }
+        .form-control:focus { border-color: #0d3b66; }
+        .btn { display: inline-block; padding: 12px 32px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 700; color: #fff; border: none; cursor: pointer; }
         .btn-primary { background: #0d3b66; }
         .btn-primary:hover { background: #145a8a; }
         .alert { padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 14px; }
         .alert-success { background: #dcfce7; color: #166534; }
         .alert-error { background: #fee2e2; color: #991b1b; }
-        .alert-info { background: #dbeafe; color: #1e40af; }
+        .info-box { background: #f0f9ff; border-left: 4px solid #0d3b66; padding: 12px 16px; border-radius: 6px; font-size: 13px; color: #1e40af; margin-top: 20px; }
         .footer { text-align: center; color: #6b7280; font-size: 12px; padding: 16px; }
     </style>
 </head>
@@ -56,7 +54,7 @@
             <div class="section-title">Kelola User</div>
             <a href="<?= base_url('/admin/akun-opd') ?>">👥 Manajemen Akun OPD</a>
             <div class="section-title">Penilaian</div>
-            <a href="<?= base_url('/admin/verifikasi') ?>" class="active">📝 Verifikasi Penilaian</a>
+            <a href="<?= base_url('/admin/verifikasi') ?>">📝 Verifikasi Penilaian</a>
             <div class="section-title">Pelaporan</div>
             <a href="<?= base_url('/admin/rekapitulasi') ?>">📈 Rekapitulasi Data</a>
             <a href="<?= base_url('/admin/laporan') ?>">📥 Ekspor Laporan</a>
@@ -66,53 +64,45 @@
         </aside>
 
         <main class="content">
-            <h1>Verifikasi Penilaian</h1>
+            <h1>Ekspor Laporan</h1>
 
-            <?php if (session()->getFlashdata('success')): ?>
-                <div class="alert alert-success"><?= session()->getFlashdata('success') ?></div>
-            <?php endif; ?>
             <?php if (session()->getFlashdata('error')): ?>
                 <div class="alert alert-error"><?= session()->getFlashdata('error') ?></div>
             <?php endif; ?>
 
-            <?php if (empty($daftar)): ?>
-                <div class="alert alert-info">Belum ada penilaian yang menunggu verifikasi.</div>
-            <?php else: ?>
-                <div class="card">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Nama OPD</th>
-                                <th>Periode</th>
-                                <th>Tanggal Submit</th>
-                                <th>Total Skor</th>
-                                <th>Status</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($daftar as $i => $d): ?>
-                                <tr>
-                                    <td><?= $i + 1 ?></td>
-                                    <td><?= esc($d['nama_opd']) ?></td>
-                                    <td><?= esc($d['tahun_periode']) ?></td>
-                                    <td><?= $d['diajukan_pada'] ? date('d M Y H:i', strtotime($d['diajukan_pada'])) : '-' ?></td>
-                                    <td><?= number_format($d['total_skor'], 0) ?></td>
-                                    <td>
-                                        <span class="badge <?= $d['status'] === 'DIKIRIM' ? 'badge-dikirim' : 'badge-verif-ulang' ?>">
-                                            <?= esc($d['status']) ?>
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <a href="<?= base_url('/admin/verifikasi/detail/' . $d['id']) ?>" class="btn btn-primary">Lihat Detail</a>
-                                    </td>
-                                </tr>
+            <div class="card">
+                <form action="<?= base_url('/admin/laporan/generate') ?>" method="post" target="_blank">
+                    <?= csrf_field() ?>
+
+                    <div class="form-group">
+                        <label for="periode_id">Periode</label>
+                        <select name="periode_id" id="periode_id" class="form-control" required>
+                            <option value="">-- Pilih Periode --</option>
+                            <?php foreach ($periodeList as $p): ?>
+                                <option value="<?= $p['id'] ?>"><?= esc($p['tahun']) ?> - <?= esc($p['nama']) ?></option>
                             <?php endforeach; ?>
-                        </tbody>
-                    </table>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="opd_id">Cakupan OPD</label>
+                        <select name="opd_id" id="opd_id" class="form-control">
+                            <option value="semua">Semua OPD</option>
+                            <?php foreach ($opdList as $o): ?>
+                                <option value="<?= $o['id'] ?>"><?= esc($o['nama']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">📄 Buat & Unduh Laporan PDF</button>
+                </form>
+
+                <div class="info-box">
+                    <strong>ℹ️ Informasi:</strong><br>
+                    Laporan berisi data OPD (nama, kepala, NIP, pangkat), 11 variabel penilaian beserta tingkat dan skor,
+                    total skor, serta kesimpulan. File PDF akan otomatis terunduh.
                 </div>
-            <?php endif; ?>
+            </div>
         </main>
     </div>
 

@@ -37,6 +37,10 @@ $routes->group('admin', ['filter' => 'auth:admin'], function ($routes) {
 
     // Rekapitulasi
     $routes->get('rekapitulasi', '\App\Modules\Rekapitulasi\Controllers\RekapitulasiController::index');
+
+    // Ekspor Laporan
+    $routes->get('laporan', '\App\Modules\Laporan\Controllers\LaporanController::index');
+    $routes->post('laporan/generate', '\App\Modules\Laporan\Controllers\LaporanController::generate');
 });
 
 // ============ DASHBOARD USER OPD ============

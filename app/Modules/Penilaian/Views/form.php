@@ -231,6 +231,7 @@
     <div class="footer">© <?= date('Y') ?> Pemerintah Kota Banjarbaru</div>
 
     <script>
+        // Tab switching
         document.querySelectorAll('.tab-btn').forEach(function (btn) {
             btn.addEventListener('click', function () {
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -242,20 +243,41 @@
             });
         });
 
+        // Pilih tingkat → tampilkan field bukti (disable yang tersembunyi)
         function pilihTingkat(radio, variabelId) {
+            // Sembunyikan semua field bukti di variabel ini + disable input-nya
             document.querySelectorAll('#variabel-' + variabelId + ' .bukti-field').forEach(function (el) {
                 el.style.display = 'none';
+                const input = el.querySelector('input[name="tautan_bukti"]');
+                if (input) input.disabled = true;
             });
+            
+            // Hapus selected dari semua card
             document.querySelectorAll('#variabel-' + variabelId + ' .tingkat-card').forEach(function (el) {
                 el.classList.remove('selected');
             });
 
+            // Tampilkan field bukti yang dipilih + enable input-nya
             const targetId = radio.dataset.target;
-            document.getElementById(targetId).style.display = 'block';
+            const targetField = document.getElementById(targetId);
+            targetField.style.display = 'block';
+            const targetInput = targetField.querySelector('input[name="tautan_bukti"]');
+            if (targetInput) targetInput.disabled = false;
+            
             radio.closest('.tingkat-card').classList.add('selected');
         }
 
+        // Saat halaman dibuka:
+        // - Disable semua input tautan_bukti yang field-nya tersembunyi
+        // - Auto scroll ke tab aktif
         document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.bukti-field').forEach(function (el) {
+                if (el.style.display === 'none') {
+                    const input = el.querySelector('input[name="tautan_bukti"]');
+                    if (input) input.disabled = true;
+                }
+            });
+
             const activeBtn = document.querySelector('.tab-btn.active');
             if (activeBtn) {
                 activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });

@@ -144,7 +144,6 @@ class PenilaianController extends BaseController
 
         $this->buktiModel->simpanBukti($detailId, $tautan, $userId);
 
-        // Kalau status PERLU_REVISI dan user sudah simpan, tetap PERLU_REVISI sampai submit ulang
         $statusBaru = $penilaian['status'];
         if ($statusBaru === 'TERVERIFIKASI') {
             $statusBaru = 'PERLU_VERIFIKASI_ULANG';

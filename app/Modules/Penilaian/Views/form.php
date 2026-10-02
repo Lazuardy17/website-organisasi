@@ -24,14 +24,12 @@
         .alert-success { background: #dcfce7; color: #166534; }
         .alert-error { background: #fee2e2; color: #991b1b; }
 
-        /* Progress */
         .progress-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         .progress-row strong { color: #0d3b66; font-size: 20px; }
         .progress-row span { color: #0d3b66; font-weight: 700; font-size: 18px; }
         .progress-bar { background: #e5e7eb; height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 24px; }
         .progress-bar .fill { background: #0d3b66; height: 100%; border-radius: 4px; transition: width 0.3s; }
 
-        /* Tab */
         .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
         .tab-btn {
             padding: 8px 20px; border: 1px solid #d1d5db; border-radius: 24px;
@@ -47,7 +45,6 @@
         .tab-btn.active .dot { border-color: #fbbf24; }
         .tab-btn.terisi .dot { background: #16a34a; border-color: #16a34a; }
 
-        /* Action buttons */
         .action-row { display: flex; justify-content: flex-end; gap: 12px; margin-bottom: 24px; }
         .btn { display: inline-block; padding: 10px 24px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 600; color: #fff; border: none; cursor: pointer; }
         .btn-primary { background: #0d3b66; }
@@ -55,7 +52,6 @@
         .btn-outline { background: #fff; color: #0d3b66; border: 1px solid #0d3b66; }
         .btn-outline:hover { background: #f0f4f8; }
 
-        /* Tingkat Card */
         .tingkat-card {
             background: #fff; border: 2px solid #e5e7eb; border-radius: 12px;
             padding: 20px; margin-bottom: 12px; cursor: pointer; transition: all 0.2s;
@@ -83,11 +79,17 @@
         }
         .bukti-field input:focus { border-color: #0d3b66; }
 
-        /* Form per tab */
         .variabel-panel { display: none; }
         .variabel-panel.active { display: block; }
         .variabel-title { color: #0d3b66; font-size: 18px; font-weight: 700; margin-bottom: 16px; }
         .simpan-row { display: flex; justify-content: flex-end; margin-top: 20px; }
+
+        .catatan-revisi-box {
+            background: #fef3c7; border-left: 4px solid #f59e0b;
+            padding: 12px 16px; border-radius: 8px; margin-bottom: 16px;
+        }
+        .catatan-revisi-box strong { color: #92400e; display: block; margin-bottom: 4px; }
+        .catatan-revisi-box span { color: #78350f; font-size: 14px; }
 
         .footer { text-align: center; color: #6b7280; font-size: 12px; padding: 16px; }
     </style>
@@ -134,7 +136,12 @@
                 <div class="alert alert-error"><?= session()->getFlashdata('error') ?></div>
             <?php endif; ?>
 
-            <!-- Progress -->
+            <?php if ($penilaian['status'] === 'PERLU_REVISI'): ?>
+                <div class="alert" style="background:#fef3c7; color:#92400e; border-left:4px solid #f59e0b;">
+                    ⚠️ <strong>Penilaian Anda sedang dalam status PERLU REVISI.</strong> Silakan perbaiki variabel yang ditandai, lalu submit ulang.
+                </div>
+            <?php endif; ?>
+
             <div class="progress-row">
                 <strong>Progress Pengisian</strong>
                 <span><?= $terisi ?>/<?= $totalVariabel ?></span>
@@ -143,33 +150,40 @@
                 <div class="fill" style="width: <?= ($terisi / $totalVariabel) * 100 ?>%;"></div>
             </div>
 
-            <!-- Tabs -->
             <div class="tabs">
                 <?php foreach ($variabel as $i => $v): ?>
                     <?php
                         $isAktif = ($tabAktif && $v['id'] == $tabAktif) || (!$tabAktif && $i === 0);
+                        $punyaCatatan = !empty($v['catatan_revisi']);
                     ?>
                     <button type="button" 
                             class="tab-btn <?= $isAktif ? 'active' : '' ?> <?= $v['tingkat_id_terpilih'] ? 'terisi' : '' ?>"
+                            style="<?= $punyaCatatan ? 'border-color: #f59e0b;' : '' ?>"
                             data-target="variabel-<?= $v['id'] ?>">
-                        <span class="dot"></span> Variabel <?= $v['nomor_urutan'] ?>
+                        <span class="dot" style="<?= $punyaCatatan ? 'background: #f59e0b; border-color: #f59e0b;' : '' ?>"></span> 
+                        Variabel <?= $v['nomor_urutan'] ?>
                     </button>
                 <?php endforeach; ?>
             </div>
 
-            <!-- Action buttons -->
             <div class="action-row">
                 <a href="<?= base_url('/opd/penilaian') ?>" class="btn btn-primary">Simpan Draft</a>
                 <a href="<?= base_url('/opd/kesimpulan') ?>" class="btn btn-outline">Kesimpulan</a>
             </div>
 
-            <!-- Panel per Variabel -->
             <?php foreach ($variabel as $i => $v): ?>
-                <?php
-                    $isAktif = ($tabAktif && $v['id'] == $tabAktif) || (!$tabAktif && $i === 0);
-                ?>
+                <?php $isAktif = ($tabAktif && $v['id'] == $tabAktif) || (!$tabAktif && $i === 0); ?>
                 <div class="variabel-panel <?= $isAktif ? 'active' : '' ?>" id="variabel-<?= $v['id'] ?>">
                     <h2 class="variabel-title"><?= esc($v['nama']) ?></h2>
+
+                    <?php if (!empty($v['catatan_revisi'])): ?>
+                        <?php foreach ($v['catatan_revisi'] as $cr): ?>
+                            <div class="catatan-revisi-box">
+                                <strong>⚠️ Catatan Revisi dari Admin:</strong>
+                                <span><?= esc($cr['catatan']) ?></span>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
 
                     <form action="<?= base_url('/opd/penilaian/simpan/' . $v['id']) ?>" method="post">
                         <?= csrf_field() ?>
@@ -217,7 +231,6 @@
     <div class="footer">© <?= date('Y') ?> Pemerintah Kota Banjarbaru</div>
 
     <script>
-        // Tab switching
         document.querySelectorAll('.tab-btn').forEach(function (btn) {
             btn.addEventListener('click', function () {
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -229,7 +242,6 @@
             });
         });
 
-        // Pilih tingkat → tampilkan field bukti
         function pilihTingkat(radio, variabelId) {
             document.querySelectorAll('#variabel-' + variabelId + ' .bukti-field').forEach(function (el) {
                 el.style.display = 'none';
@@ -243,7 +255,6 @@
             radio.closest('.tingkat-card').classList.add('selected');
         }
 
-        // Auto scroll ke tab aktif saat halaman dibuka
         document.addEventListener('DOMContentLoaded', function () {
             const activeBtn = document.querySelector('.tab-btn.active');
             if (activeBtn) {

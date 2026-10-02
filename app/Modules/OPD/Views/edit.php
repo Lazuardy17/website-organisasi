@@ -62,7 +62,7 @@
             <div class="section-title">Kelola User</div>
             <a href="<?= base_url('/admin/akun-opd') ?>" class="active">👥 Manajemen Akun OPD</a>
             <div class="section-title">Penilaian</div>
-            <a href="#">📝 Verifikasi Penilaian</a>
+            <a href="<?= base_url('/admin/verifikasi') ?>">📝 Verifikasi Penilaian</a>
             <div class="section-title">Pelaporan</div>
             <a href="#">📈 Rekapitulasi Data</a>
             <a href="#">📥 Ekspor Laporan</a>

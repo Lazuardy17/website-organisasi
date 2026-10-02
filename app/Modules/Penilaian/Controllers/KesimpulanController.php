@@ -17,20 +17,15 @@ class KesimpulanController extends BaseController
         $this->detailModel    = new DetailPenilaianModel();
     }
 
-    /**
-     * Tampilkan halaman kesimpulan.
-     */
     public function index()
     {
         $opdId = session()->get('opd_id');
 
-        // Ambil periode aktif
         $periode = $this->penilaianModel->getPeriodeAktif();
         if (!$periode) {
             return redirect()->to('/opd/dashboard')->with('error', 'Tidak ada periode aktif.');
         }
 
-        // Ambil penilaian OPD ini
         $penilaian = $this->penilaianModel
             ->where('opd_id', $opdId)
             ->where('periode_id', $periode['id'])
@@ -40,25 +35,32 @@ class KesimpulanController extends BaseController
             return redirect()->to('/opd/penilaian')->with('error', 'Silakan isi variabel terlebih dahulu.');
         }
 
-        // Ambil semua detail
         $detail = $this->detailModel->getByPenilaian($penilaian['id']);
 
-        // Hitung total skor
         $totalSkor = 0;
         foreach ($detail as $d) {
             $totalSkor += (float) $d['nilai_skor'];
         }
 
-        // Tentukan kesimpulan
         $kesimpulan = $this->tentukanKesimpulan($totalSkor);
 
-        // Cek kelengkapan: hitung berapa variabel yang benar-benar terisi
         $db = \Config\Database::connect();
         $jumlahTerisi = $db->table('detail_penilaian')
             ->where('penilaian_id', $penilaian['id'])
             ->countAllResults();
 
         $lengkap = ($jumlahTerisi >= 11);
+
+        // Ambil catatan revisi umum (detail_id NULL)
+        $catatanUmum = $db->table('catatan_revisi')
+            ->whereIn('verifikasi_id', function ($builder) use ($penilaian) {
+                return $builder->select('id')->from('verifikasi_penilaian')
+                               ->where('penilaian_id', $penilaian['id']);
+            })
+            ->where('detail_id IS NULL')
+            ->where('status', 'TERBUKA')
+            ->orderBy('dibuat_pada', 'DESC')
+            ->get()->getResultArray();
 
         $data = [
             'title'        => 'Kesimpulan & Hasil Evaluasi',
@@ -69,14 +71,12 @@ class KesimpulanController extends BaseController
             'kesimpulan'   => $kesimpulan,
             'jumlahTerisi' => $jumlahTerisi,
             'lengkap'      => $lengkap,
+            'catatanUmum'  => $catatanUmum,
         ];
 
         return view('App\Modules\Penilaian\Views\kesimpulan', $data);
     }
 
-    /**
-     * Submit penilaian ke Admin.
-     */
     public function submit()
     {
         $opdId  = session()->get('opd_id');
@@ -96,7 +96,6 @@ class KesimpulanController extends BaseController
             return redirect()->to('/opd/penilaian')->with('error', 'Silakan isi variabel terlebih dahulu.');
         }
 
-        // Validasi: hitung langsung dari database
         $db = \Config\Database::connect();
         $jumlahTerisi = $db->table('detail_penilaian')
             ->where('penilaian_id', $penilaian['id'])
@@ -107,7 +106,6 @@ class KesimpulanController extends BaseController
                              ->with('error', 'Semua 11 variabel harus diisi sebelum submit. Baru terisi: ' . $jumlahTerisi);
         }
 
-        // Ambil detail untuk hitung skor
         $detail = $this->detailModel->getByPenilaian($penilaian['id']);
         $totalSkor = 0;
         foreach ($detail as $d) {
@@ -115,7 +113,6 @@ class KesimpulanController extends BaseController
         }
         $kesimpulan = $this->tentukanKesimpulan($totalSkor);
 
-        // Update status
         $this->penilaianModel->update($penilaian['id'], [
             'status'          => 'DIKIRIM',
             'total_skor'      => $totalSkor,
@@ -125,22 +122,36 @@ class KesimpulanController extends BaseController
             'diperbarui_pada' => date('Y-m-d H:i:s'),
         ]);
 
-        // Catat riwayat
+        // Tentukan alasan riwayat
+        $alasan = ($penilaian['status'] === 'PERLU_REVISI') 
+            ? 'User OPD mengajukan ulang setelah revisi.'
+            : 'User OPD mengajukan penilaian untuk diverifikasi.';
+
         $db->table('riwayat_status_penilaian')->insert([
             'penilaian_id'      => $penilaian['id'],
             'status_sebelumnya' => $penilaian['status'],
             'status_baru'       => 'DIKIRIM',
             'diubah_oleh'       => $userId,
-            'alasan'            => 'User OPD mengajukan penilaian untuk diverifikasi.',
+            'alasan'            => $alasan,
             'dibuat_pada'       => date('Y-m-d H:i:s'),
         ]);
 
-        return redirect()->to('/opd/kesimpulan')->with('success', 'Penilaian berhasil diajukan ke Admin.');
+        // Tandai catatan revisi sebagai SELESAI
+        $db->table('catatan_revisi')
+            ->whereIn('verifikasi_id', function ($builder) use ($penilaian) {
+                return $builder->select('id')->from('verifikasi_penilaian')
+                               ->where('penilaian_id', $penilaian['id']);
+            })
+            ->where('status', 'TERBUKA')
+            ->update([
+                'status'            => 'SELESAI',
+                'diselesaikan_oleh' => $userId,
+                'diselesaikan_pada' => date('Y-m-d H:i:s'),
+            ]);
+
+        return redirect()->to('/opd/kesimpulan')->with('success', 'Penilaian berhasil diajukan ulang ke Admin.');
     }
 
-    /**
-     * Tentukan kesimpulan dari total skor.
-     */
     private function tentukanKesimpulan($skor)
     {
         if ($skor >= 46.1) return 'Sangat Tinggi';

@@ -28,6 +28,12 @@ $routes->group('admin', ['filter' => 'auth:admin'], function ($routes) {
     $routes->post('akun-opd/update/(:num)', '\App\Modules\OPD\Controllers\AkunOpdController::update/$1');
     $routes->get('akun-opd/reset/(:num)', '\App\Modules\OPD\Controllers\AkunOpdController::resetPassword/$1');
     $routes->get('akun-opd/toggle/(:num)', '\App\Modules\OPD\Controllers\AkunOpdController::toggleStatus/$1');
+
+    // Verifikasi Penilaian
+    $routes->get('verifikasi', '\App\Modules\Verifikasi\Controllers\VerifikasiController::index');
+    $routes->get('verifikasi/detail/(:num)', '\App\Modules\Verifikasi\Controllers\VerifikasiController::detail/$1');
+    $routes->post('verifikasi/verifikasi/(:num)', '\App\Modules\Verifikasi\Controllers\VerifikasiController::verifikasi/$1');
+    $routes->post('verifikasi/revisi/(:num)', '\App\Modules\Verifikasi\Controllers\VerifikasiController::revisi/$1');
 });
 
 // ============ DASHBOARD USER OPD ============

@@ -64,6 +64,7 @@
     </div>
 
     <div class="layout">
+        
         <aside class="sidebar">
             <div class="brand">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Lambang_Kota_Banjarbaru.png/200px-Lambang_Kota_Banjarbaru.png" alt="Logo">
@@ -78,7 +79,7 @@
                 <div class="section-title">Kelola User</div>
                 <a href="<?= base_url('/admin/akun-opd') ?>">👥 Manajemen Akun OPD</a>
                 <div class="section-title">Penilaian</div>
-                <a href="#">📝 Verifikasi Penilaian</a>
+                <a href="<?= base_url('/admin/verifikasi') ?>">📝 Verifikasi Penilaian</a>
                 <div class="section-title">Pelaporan</div>
                 <a href="#">📈 Rekapitulasi Data</a>
                 <a href="#">📥 Ekspor Laporan</a>

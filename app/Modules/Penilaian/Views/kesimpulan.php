@@ -20,37 +20,25 @@
         .content { flex: 1; padding: 24px 32px; }
         .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .content h1 { color: #0d3b66; font-size: 24px; }
-        .status-badge {
-            background: #fef3c7; color: #92400e; padding: 6px 16px;
-            border-radius: 20px; font-size: 13px; font-weight: 600;
-        }
+        .status-badge { background: #fef3c7; color: #92400e; padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; }
         .status-badge.dikirim { background: #dbeafe; color: #1e40af; }
         .status-badge.terverifikasi { background: #dcfce7; color: #166534; }
-
+        .status-badge.perlurevisi { background: #fee2e2; color: #991b1b; }
         .card { background: #fff; border-radius: 12px; padding: 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 20px; }
-
-        /* Nilai Akhir */
         .nilai-akhir { text-align: center; padding: 32px 0; }
         .nilai-akhir .label { color: #6b7280; font-size: 16px; margin-bottom: 8px; }
         .nilai-akhir .value { color: #0d3b66; font-size: 72px; font-weight: 700; line-height: 1; }
-        .nilai-akhir .kesimpulan {
-            display: inline-block; padding: 8px 24px; border-radius: 20px;
-            font-size: 16px; font-weight: 700; margin-top: 16px;
-        }
+        .nilai-akhir .kesimpulan { display: inline-block; padding: 8px 24px; border-radius: 20px; font-size: 16px; font-weight: 700; margin-top: 16px; }
         .kesimpulan-sangat-rendah { background: #fee2e2; color: #991b1b; }
         .kesimpulan-rendah { background: #fed7aa; color: #9a3412; }
         .kesimpulan-sedang { background: #fef3c7; color: #92400e; }
         .kesimpulan-tinggi { background: #dbeafe; color: #1e40af; }
         .kesimpulan-sangat-tinggi { background: #dcfce7; color: #166534; }
-
-        /* Tabel */
         .table-title { color: #0d3b66; font-size: 16px; font-weight: 700; margin-bottom: 12px; }
         table { width: 100%; border-collapse: collapse; }
         th { color: #6b7280; font-size: 13px; text-align: left; padding: 10px 8px; border-bottom: 2px solid #e5e7eb; text-transform: uppercase; }
         td { padding: 12px 8px; border-bottom: 1px solid #e5e7eb; font-size: 14px; color: #374151; }
         td.skor { text-align: right; font-weight: 600; color: #0d3b66; width: 80px; }
-
-        /* Action */
         .action-row { display: flex; justify-content: center; gap: 12px; margin-top: 24px; }
         .btn { display: inline-block; padding: 12px 32px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 600; color: #fff; border: none; cursor: pointer; }
         .btn-primary { background: #0d3b66; }
@@ -59,14 +47,14 @@
         .btn-outline:hover { background: #f0f4f8; }
         .btn-success { background: #16a34a; }
         .btn-success:hover { background: #15803d; }
+        .btn-warning { background: #f59e0b; }
+        .btn-warning:hover { background: #d97706; }
         .btn:disabled { background: #9ca3af; cursor: not-allowed; }
-
-        /* Alert */
         .alert { padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 14px; }
         .alert-success { background: #dcfce7; color: #166534; }
         .alert-error { background: #fee2e2; color: #991b1b; }
         .alert-info { background: #dbeafe; color: #1e40af; }
-
+        .alert-warning { background: #fef3c7; color: #92400e; border-left: 4px solid #f59e0b; }
         .footer { text-align: center; color: #6b7280; font-size: 12px; padding: 16px; }
     </style>
 </head>
@@ -112,6 +100,15 @@
                 <div class="alert alert-error"><?= session()->getFlashdata('error') ?></div>
             <?php endif; ?>
 
+            <?php if (!empty($catatanUmum)): ?>
+                <?php foreach ($catatanUmum as $c): ?>
+                    <div class="alert alert-warning">
+                        ⚠️ <strong>Catatan Revisi dari Admin:</strong><br>
+                        <?= esc($c['catatan']) ?>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
+
             <?php if (!$lengkap): ?>
                 <div class="alert alert-info">
                     ⚠️ Anda baru mengisi <strong><?= $jumlahTerisi ?>/11</strong> variabel.
@@ -119,21 +116,15 @@
                 </div>
             <?php endif; ?>
 
-            <!-- Card Nilai Akhir -->
             <div class="card">
                 <div class="nilai-akhir">
                     <div class="label">Nilai Akhir</div>
                     <div class="value"><?= number_format($totalSkor, 0) ?></div>
-                    <?php
-                        $kelasKesimpulan = 'kesimpulan-' . strtolower(str_replace(' ', '-', $kesimpulan));
-                    ?>
-                    <span class="kesimpulan <?= $kelasKesimpulan ?>">
-                        <?= esc($kesimpulan) ?>
-                    </span>
+                    <?php $kelasKesimpulan = 'kesimpulan-' . strtolower(str_replace(' ', '-', $kesimpulan)); ?>
+                    <span class="kesimpulan <?= $kelasKesimpulan ?>"><?= esc($kesimpulan) ?></span>
                 </div>
             </div>
 
-            <!-- Card Rincian Skor -->
             <div class="card">
                 <div class="table-title">Rincian Skor per Indikator</div>
                 <table>
@@ -145,11 +136,7 @@
                     </thead>
                     <tbody>
                         <?php if (empty($detail)): ?>
-                            <tr>
-                                <td colspan="2" style="text-align: center; color: #9ca3af;">
-                                    Belum ada variabel yang diisi.
-                                </td>
-                            </tr>
+                            <tr><td colspan="2" style="text-align: center; color: #9ca3af;">Belum ada variabel yang diisi.</td></tr>
                         <?php else: ?>
                             <?php foreach ($detail as $d): ?>
                                 <tr>
@@ -162,16 +149,21 @@
                 </table>
             </div>
 
-            <!-- Action Buttons -->
             <div class="action-row">
                 <a href="<?= base_url('/opd/penilaian') ?>" class="btn btn-outline">← Kembali ke Pengisian</a>
                 
-                <?php if ($lengkap && $penilaian['status'] === 'DRAFT'): ?>
+                <?php if ($lengkap && in_array($penilaian['status'], ['DRAFT', 'PERLU_REVISI'])): ?>
                     <form action="<?= base_url('/opd/kesimpulan/submit') ?>" method="post" style="display: inline;">
                         <?= csrf_field() ?>
-                        <button type="submit" class="btn btn-success" onclick="return confirm('Yakin ingin submit? Setelah submit, Anda tidak bisa mengubah lagi kecuali Admin minta revisi.')">
-                            Submit ke Admin
-                        </button>
+                        <?php if ($penilaian['status'] === 'PERLU_REVISI'): ?>
+                            <button type="submit" class="btn btn-warning" onclick="return confirm('Ajukan kembali setelah perbaikan?')">
+                                🔄 Ajukan Ulang Setelah Revisi
+                            </button>
+                        <?php else: ?>
+                            <button type="submit" class="btn btn-success" onclick="return confirm('Yakin ingin submit? Setelah submit, Anda tidak bisa mengubah lagi kecuali Admin minta revisi.')">
+                                Submit ke Admin
+                            </button>
+                        <?php endif; ?>
                     </form>
                 <?php elseif ($penilaian['status'] === 'DIKIRIM'): ?>
                     <button class="btn btn-primary" disabled>✓ Sudah Dikirim ke Admin</button>

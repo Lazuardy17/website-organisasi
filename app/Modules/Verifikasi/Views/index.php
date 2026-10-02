@@ -19,20 +19,20 @@
         .sidebar .logout { margin: 20px; padding: 10px 20px; border: 1px solid #fff; border-radius: 8px; text-align: center; font-weight: 600; }
         .content { flex: 1; padding: 24px 32px; }
         .content h1 { color: #0d3b66; font-size: 24px; margin-bottom: 20px; }
-        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
-        .stat-card { background: #fff; border-radius: 12px; padding: 20px; border-left: 6px solid #0d3b66; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .stat-card:nth-child(2) { border-left-color: #60a5fa; }
-        .stat-card:nth-child(4) { border-left-color: #60a5fa; }
-        .stat-card .label { color: #0d3b66; font-size: 14px; margin-bottom: 8px; }
-        .stat-card .value { color: #0d3b66; font-size: 32px; font-weight: 700; }
         .card { background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .card h2 { color: #0d3b66; font-size: 18px; margin-bottom: 16px; }
         table { width: 100%; border-collapse: collapse; }
         th { color: #0d3b66; text-align: left; padding: 12px 8px; border-bottom: 2px solid #e5e7eb; font-size: 14px; }
         td { padding: 12px 8px; border-bottom: 1px solid #e5e7eb; font-size: 14px; }
         .badge { display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; }
-        .badge-submitted { background: #fef3c7; color: #92400e; }
-        .btn { display: inline-block; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: 600; color: #fff; background: #0d3b66; }
+        .badge-dikirim { background: #dbeafe; color: #1e40af; }
+        .badge-verif-ulang { background: #fef3c7; color: #92400e; }
+        .btn { display: inline-block; padding: 6px 16px; border-radius: 8px; text-decoration: none; font-size: 12px; font-weight: 600; color: #fff; border: none; cursor: pointer; }
+        .btn-primary { background: #0d3b66; }
+        .btn-primary:hover { background: #145a8a; }
+        .alert { padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 14px; }
+        .alert-success { background: #dcfce7; color: #166534; }
+        .alert-error { background: #fee2e2; color: #991b1b; }
+        .alert-info { background: #dbeafe; color: #1e40af; }
         .footer { text-align: center; color: #6b7280; font-size: 12px; padding: 16px; }
     </style>
 </head>
@@ -52,11 +52,11 @@
                     <span>Kota Banjarbaru</span>
                 </div>
             </div>
-            <a href="<?= base_url('/admin/dashboard') ?>" class="active">📊 Dashboard</a>
+            <a href="<?= base_url('/admin/dashboard') ?>">📊 Dashboard</a>
             <div class="section-title">Kelola User</div>
             <a href="<?= base_url('/admin/akun-opd') ?>">👥 Manajemen Akun OPD</a>
             <div class="section-title">Penilaian</div>
-            <a href="<?= base_url('/admin/verifikasi') ?>">📝 Verifikasi Penilaian</a>
+            <a href="<?= base_url('/admin/verifikasi') ?>" class="active">📝 Verifikasi Penilaian</a>
             <div class="section-title">Pelaporan</div>
             <a href="#">📈 Rekapitulasi Data</a>
             <a href="#">📥 Ekspor Laporan</a>
@@ -66,56 +66,53 @@
         </aside>
 
         <main class="content">
-            <h1>Dashboard Admin</h1>
+            <h1>Verifikasi Penilaian</h1>
 
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="label">Total OPD Terdaftar</div>
-                    <div class="value"><?= $total_opd ?></div>
-                </div>
-                <div class="stat-card">
-                    <div class="label">Belum Submit (draft)</div>
-                    <div class="value"><?= $belum_submit ?></div>
-                </div>
-                <div class="stat-card">
-                    <div class="label">Menunggu Verifikasi</div>
-                    <div class="value"><?= $menunggu_verif ?></div>
-                </div>
-                <div class="stat-card">
-                    <div class="label">Selesai Diverifikasi</div>
-                    <div class="value"><?= $terverifikasi ?></div>
-                </div>
-            </div>
+            <?php if (session()->getFlashdata('success')): ?>
+                <div class="alert alert-success"><?= session()->getFlashdata('success') ?></div>
+            <?php endif; ?>
+            <?php if (session()->getFlashdata('error')): ?>
+                <div class="alert alert-error"><?= session()->getFlashdata('error') ?></div>
+            <?php endif; ?>
 
-            <div class="card">
-                <h2>Antrean verifikasi utama (SUBMITTED)</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Nama OPD</th>
-                            <th>Tanggal</th>
-                            <th>Skor</th>
-                            <th>Status</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php if (empty($antrean)): ?>
-                            <tr><td colspan="5" style="text-align:center; color:#6b7280;">Belum ada penilaian yang masuk.</td></tr>
-                        <?php else: ?>
-                            <?php foreach ($antrean as $a): ?>
+            <?php if (empty($daftar)): ?>
+                <div class="alert alert-info">Belum ada penilaian yang menunggu verifikasi.</div>
+            <?php else: ?>
+                <div class="card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Nama OPD</th>
+                                <th>Periode</th>
+                                <th>Tanggal Submit</th>
+                                <th>Total Skor</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($daftar as $i => $d): ?>
                                 <tr>
-                                    <td><?= esc($a['nama_opd']) ?></td>
-                                    <td><?= esc($a['tanggal']) ?></td>
-                                    <td><?= esc($a['skor']) ?></td>
-                                    <td><span class="badge badge-submitted"><?= esc($a['status']) ?></span></td>
-                                    <td><a href="#" class="btn">Verifikasi</a></td>
+                                    <td><?= $i + 1 ?></td>
+                                    <td><?= esc($d['nama_opd']) ?></td>
+                                    <td><?= esc($d['tahun_periode']) ?></td>
+                                    <td><?= $d['diajukan_pada'] ? date('d M Y H:i', strtotime($d['diajukan_pada'])) : '-' ?></td>
+                                    <td><?= number_format($d['total_skor'], 0) ?></td>
+                                    <td>
+                                        <span class="badge <?= $d['status'] === 'DIKIRIM' ? 'badge-dikirim' : 'badge-verif-ulang' ?>">
+                                            <?= esc($d['status']) ?>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="<?= base_url('/admin/verifikasi/detail/' . $d['id']) ?>" class="btn btn-primary">Lihat Detail</a>
+                                    </td>
                                 </tr>
                             <?php endforeach; ?>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
-            </div>
+                        </tbody>
+                    </table>
+                </div>
+            <?php endif; ?>
         </main>
     </div>
 

@@ -6,22 +6,17 @@ use App\Controllers\BaseController;
 
 class IdentitasController extends BaseController
 {
-    /**
-     * Tampilkan form Evaluasi Kematangan Kelembagaan.
-     */
     public function index()
     {
         $db      = \Config\Database::connect();
         $opdId   = session()->get('opd_id');
 
-        // Ambil data OPD dari database
         $opd = $db->table('perangkat_daerah')->where('id', $opdId)->get()->getRowArray();
 
         if (!$opd) {
             return redirect()->to('/opd/dashboard')->with('error', 'Data OPD tidak ditemukan.');
         }
 
-        // Kalau sudah lengkap, langsung ke dashboard
         if (!empty($opd['identitas_lengkap'])) {
             return redirect()->to('/opd/dashboard');
         }
@@ -31,12 +26,9 @@ class IdentitasController extends BaseController
             'opd'   => $opd,
         ];
 
-        return view('App\Modules\OPD\Views\identitas', $data);
+        return view('App\Modules\OPD\Views\opd\identitas', $data);
     }
 
-    /**
-     * Simpan data identitas.
-     */
     public function simpan()
     {
         $db    = \Config\Database::connect();
@@ -46,7 +38,7 @@ class IdentitasController extends BaseController
         $pangkatKepala = trim($this->request->getPost('pangkat_kepala'));
         $nipKepala     = trim($this->request->getPost('nip_kepala'));
 
-        // Validasi: wajib diisi
+        // Validasi
         if (empty($namaKepala) || empty($pangkatKepala) || empty($nipKepala)) {
             return redirect()->back()->with('error', 'Semua field wajib diisi.')->withInput();
         }
@@ -61,6 +53,8 @@ class IdentitasController extends BaseController
                 'identitas_lengkap' => true,
                 'diperbarui_pada'   => date('Y-m-d H:i:s'),
             ]);
+
+        session()->set('identitas_lengkap', true);
 
         return redirect()->to('/opd/dashboard')->with('success', 'Data identitas berhasil disimpan.');
     }

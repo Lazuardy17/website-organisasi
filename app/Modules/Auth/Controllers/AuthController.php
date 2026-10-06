@@ -15,23 +15,12 @@ class AuthController extends BaseController
     }
 
     /**
-     * Cek apakah user OPD sudah lengkapi identitas.
-     * Return true kalau SUDAH lengkap, false kalau BELUM.
+     * Cek apakah user sudah lengkapi identitas.
+     * Pakai session — konsisten & cepat.
      */
     private function cekIdentitasLengkap()
     {
-        // Admin selalu dianggap lengkap
-        if (session()->get('peran_id') == 1) {
-            return true;
-        }
-
-        // User OPD: cek flag identitas_lengkap
-        $db  = \Config\Database::connect();
-        $opd = $db->table('perangkat_daerah')
-            ->where('id', session()->get('opd_id'))
-            ->get()->getRowArray();
-
-        return $opd && !empty($opd['identitas_lengkap']);
+        return (bool) session()->get('identitas_lengkap');
     }
 
     public function login()
@@ -44,6 +33,9 @@ class AuthController extends BaseController
                 $opd = $db->table('perangkat_daerah')
                     ->where('id', session()->get('opd_id'))
                     ->get()->getRowArray();
+
+                // ⭐ SET SESSION
+                session()->set('identitas_lengkap', !empty($opd['identitas_lengkap']));
 
                 if ($opd && empty($opd['identitas_lengkap'])) {
                     return redirect()->to('/opd/identitas');
@@ -62,19 +54,26 @@ class AuthController extends BaseController
         $password = $this->request->getPost('password');
 
         if (empty($username) || empty($password)) {
-            return redirect()->back()->with('error', 'Username dan password wajib diisi.');
+            return redirect()->to('/')
+                ->with('error', 'Username dan password wajib diisi.')
+                ->with('username', $username);
         }
 
         $user = $this->userModel->findByUsername($username);
 
         if (!$user) {
-            return redirect()->back()->with('error', 'Username atau password salah.');
+            return redirect()->to('/')
+                ->with('error', 'Username atau password salah.')
+                ->with('username', $username);
         }
 
         if (!password_verify($password, $user['hash_kata_sandi'])) {
-            return redirect()->back()->with('error', 'Username atau password salah.');
+            return redirect()->to('/')
+                ->with('error', 'Username atau password salah.')
+                ->with('username', $username);
         }
 
+        // Set session dasar
         session()->set([
             'is_logged_in' => true,
             'user_id'      => $user['id'],
@@ -83,22 +82,29 @@ class AuthController extends BaseController
             'opd_id'       => $user['opd_id'],
         ]);
 
-        $this->userModel->update($user['id'], [
-            'login_terakhir_pada' => date('Y-m-d H:i:s'),
-        ]);
-
+        // ⭐ Set session identitas_lengkap
         if ($user['peran_id'] == 1) {
-            return redirect()->to('/admin/dashboard');
+            session()->set('identitas_lengkap', true);
         } else {
             $db  = \Config\Database::connect();
             $opd = $db->table('perangkat_daerah')
                 ->where('id', $user['opd_id'])
                 ->get()->getRowArray();
 
-            if ($opd && empty($opd['identitas_lengkap'])) {
+            session()->set('identitas_lengkap', !empty($opd['identitas_lengkap']));
+        }
+
+        $this->userModel->update($user['id'], [
+            'login_terakhir_pada' => date('Y-m-d H:i:s'),
+        ]);
+
+        // Redirect
+        if ($user['peran_id'] == 1) {
+            return redirect()->to('/admin/dashboard');
+        } else {
+            if (!session()->get('identitas_lengkap')) {
                 return redirect()->to('/opd/identitas');
             }
-
             return redirect()->to('/opd/dashboard');
         }
     }
@@ -115,7 +121,6 @@ class AuthController extends BaseController
 
     public function ubahPassword()
     {
-        // Cegah user OPD yang belum lengkapi identitas
         if (!$this->cekIdentitasLengkap()) {
             return redirect()->to('/opd/identitas')->with('error', 'Lengkapi identitas terlebih dahulu.');
         }
@@ -129,7 +134,6 @@ class AuthController extends BaseController
 
     public function simpanPassword()
     {
-        // Cegah user OPD yang belum lengkapi identitas
         if (!$this->cekIdentitasLengkap()) {
             return redirect()->to('/opd/identitas')->with('error', 'Lengkapi identitas terlebih dahulu.');
         }
@@ -139,7 +143,6 @@ class AuthController extends BaseController
         $passwordBaru = $this->request->getPost('password_baru');
         $konfirmasi   = $this->request->getPost('konfirmasi');
 
-        // Validasi
         if (empty($passwordLama) || empty($passwordBaru) || empty($konfirmasi)) {
             return redirect()->back()->with('error', 'Semua field wajib diisi.');
         }
@@ -152,14 +155,12 @@ class AuthController extends BaseController
             return redirect()->back()->with('error', 'Password baru dan konfirmasi tidak sama.');
         }
 
-        // Cek password lama
         $user = $this->userModel->find($userId);
 
         if (!$user || !password_verify($passwordLama, $user['hash_kata_sandi'])) {
             return redirect()->back()->with('error', 'Password lama salah.');
         }
 
-        // Simpan password baru
         $this->userModel->update($userId, [
             'hash_kata_sandi' => password_hash($passwordBaru, PASSWORD_DEFAULT),
             'diperbarui_pada' => date('Y-m-d H:i:s'),

@@ -12,8 +12,9 @@ $routes->post('/login/attempt', '\App\Modules\Auth\Controllers\AuthController::a
 $routes->get('/logout', '\App\Modules\Auth\Controllers\AuthController::logout');
 
 // ============ UBAH PASSWORD (Admin & User OPD) ============
-$routes->get('/ubah-password', '\App\Modules\Auth\Controllers\AuthController::ubahPassword', ['filter' => 'auth']);
-$routes->post('/ubah-password/simpan', '\App\Modules\Auth\Controllers\AuthController::simpanPassword', ['filter' => 'auth']);
+// ⭐ Tambah filter 'identitas' — biar OPD yang belum lengkap tidak bisa akses
+$routes->get('/ubah-password', '\App\Modules\Auth\Controllers\AuthController::ubahPassword', ['filter' => ['auth', 'identitas']]);
+$routes->post('/ubah-password/simpan', '\App\Modules\Auth\Controllers\AuthController::simpanPassword', ['filter' => ['auth', 'identitas']]);
 
 // ============ DASHBOARD ADMIN ============
 $routes->group('admin', ['filter' => 'auth:admin'], function ($routes) {
@@ -45,21 +46,28 @@ $routes->group('admin', ['filter' => 'auth:admin'], function ($routes) {
 
 // ============ DASHBOARD USER OPD ============
 $routes->group('opd', ['filter' => 'auth:opd'], function ($routes) {
-    $routes->get('dashboard', '\App\Modules\Dashboard\Controllers\DashboardController::opd');
 
-    // Akun OPD
-    $routes->get('akun', '\App\Modules\OPD\Controllers\AkunController::index');
-    $routes->post('akun/update', '\App\Modules\OPD\Controllers\AkunController::update');
-
-    // Form Identitas (Evaluasi Kematangan Kelembagaan)
+    // Identitas — TANPA filter 'identitas' (agar bisa diakses meski belum lengkap)
     $routes->get('identitas', '\App\Modules\OPD\Controllers\IdentitasController::index');
     $routes->post('identitas/simpan', '\App\Modules\OPD\Controllers\IdentitasController::simpan');
 
-    // Pengisian Variabel
-    $routes->get('penilaian', '\App\Modules\Penilaian\Controllers\PenilaianController::index');
-    $routes->post('penilaian/simpan/(:num)', '\App\Modules\Penilaian\Controllers\PenilaianController::simpan/$1');
+    // ⭐ Grup dengan filter 'identitas' — TERKUNCI sampai identitas lengkap
+    $routes->group('', ['filter' => 'identitas'], function ($routes) {
+        $routes->get('dashboard', '\App\Modules\Dashboard\Controllers\DashboardController::opd');
 
-    // Kesimpulan & Submit
-    $routes->get('kesimpulan', '\App\Modules\Penilaian\Controllers\KesimpulanController::index');
-    $routes->post('kesimpulan/submit', '\App\Modules\Penilaian\Controllers\KesimpulanController::submit');
+        // Akun OPD
+        $routes->get('akun', '\App\Modules\OPD\Controllers\AkunController::index');
+        $routes->post('akun/update', '\App\Modules\OPD\Controllers\AkunController::update');
+
+        // Pengisian Variabel
+        $routes->get('penilaian', '\App\Modules\Penilaian\Controllers\PenilaianController::index');
+        $routes->post('penilaian/simpan/(:num)', '\App\Modules\Penilaian\Controllers\PenilaianController::simpan/$1');
+
+        // Kesimpulan & Submit
+        $routes->get('kesimpulan', '\App\Modules\Penilaian\Controllers\KesimpulanController::index');
+        $routes->post('kesimpulan/submit', '\App\Modules\Penilaian\Controllers\KesimpulanController::submit');
+    });
 });
+
+// ⚠️ HAPUS ROUTE DEBUG SEBELUM PRODUCTION
+// $routes->get('/tes-pdf', function () { ... });

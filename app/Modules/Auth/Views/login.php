@@ -67,7 +67,14 @@
 
                     <div class="mb-3">
                         <label for="username" class="form-label">Username</label>
-                        <input type="text" name="username" id="username" class="form-control" placeholder="Masukkan Username" required autofocus>
+                        <input type="text"
+                               name="username"
+                               id="username"
+                               class="form-control"
+                               placeholder="Masukkan Username"
+                               value="<?= session()->getFlashdata('username') ?? '' ?>"    <!-- ⭐ Preserve -->
+                               required
+                               autofocus>
                     </div>
 
                     <div class="mb-4">

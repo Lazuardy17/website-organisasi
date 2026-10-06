@@ -26,11 +26,11 @@ class AkunOpdController extends BaseController
                 ->select('pengguna.*, perangkat_daerah.nama as nama_opd, perangkat_daerah.kode as kode_opd, perangkat_daerah.nama_kepala, perangkat_daerah.nip_kepala, perangkat_daerah.pangkat_kepala')
                 ->join('perangkat_daerah', 'perangkat_daerah.id = pengguna.opd_id', 'left')
                 ->where('pengguna.peran_id', 2)
-                ->orderBy('perangkat_daerah.nama', 'ASC')
+                ->orderBy('perangkat_daerah.id', 'ASC')
                 ->findAll(),
         ];
 
-        return view('App\Modules\OPD\Views\index', $data);
+        return view('App\Modules\OPD\Views\admin\index', $data);
     }
 
     /* =========================================================
@@ -46,7 +46,7 @@ class AkunOpdController extends BaseController
                 return $builder->select('opd_id')->from('pengguna')->where('opd_id IS NOT NULL');
             })
             ->where('status', 'AKTIF')
-            ->orderBy('nama', 'ASC')
+            ->orderBy('id', 'ASC')
             ->get()->getResultArray();
 
         $data = [
@@ -54,7 +54,7 @@ class AkunOpdController extends BaseController
             'opd'   => $opdBelumPunyaAkun,
         ];
 
-        return view('App\Modules\OPD\Views\form', $data);
+        return view('App\Modules\OPD\Views\admin\form', $data);
     }
 
     public function store()
@@ -146,7 +146,7 @@ class AkunOpdController extends BaseController
             'akun'  => $akun,
         ];
 
-        return view('App\Modules\OPD\Views\detail', $data);
+        return view('App\Modules\OPD\Views\admin\detail', $data);
     }
 
     /* =========================================================
@@ -165,7 +165,7 @@ class AkunOpdController extends BaseController
             return redirect()->to('/admin/akun-opd')->with('error', 'Akun tidak ditemukan.');
         }
 
-        return view('App\Modules\OPD\Views\edit', [
+        return view('App\Modules\OPD\Views\admin\edit', [
             'title' => 'Edit Akun OPD',
             'akun'  => $akun,
         ]);

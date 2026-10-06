@@ -48,7 +48,7 @@ class RekapitulasiController extends BaseController
             $builder->where('penilaian.status', $status);
         }
 
-        $daftar = $builder->orderBy('perangkat_daerah.nama', 'ASC')
+        $daftar = $builder->orderBy('perangkat_daerah.id', 'ASC')
                           ->get()->getResultArray();
 
         // Statistik ringkasan

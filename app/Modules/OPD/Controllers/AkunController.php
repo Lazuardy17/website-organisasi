@@ -25,7 +25,7 @@ class AkunController extends BaseController
             'opd'   => $opd,
         ];
 
-        return view('App\Modules\OPD\Views\akun', $data);
+        return view('App\Modules\OPD\Views\opd\akun', $data);
     }
 
     /**

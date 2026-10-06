@@ -1,0 +1,19 @@
+/* ===== Topbar ===== */
+.topbar {
+    background-color: var(--navy);
+    color: #fff;
+    font-size: 0.85rem;
+    padding: 12px 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+.topbar i { margin-right: 6px; }
+
+/* ===== Footer ===== */
+.site-footer {
+    background-color: var(--navy);
+    color: #fff;
+    text-align: center;
+    font-size: 0.85rem;
+    padding: 14px 0;
+    margin-top: 0;        
+}

@@ -75,7 +75,8 @@
 
 <!-- Action Buttons -->
 <div class="action-row" style="justify-content: center;">
-    <a href="<?= base_url('/opd/penilaian') ?>" class="btn btn-outline">← Kembali ke Pengisian</a>
+    <a href="<?= base_url('/opd/penilaian') ?>" class="btn btn-outline">
+                    <i class="bi bi-arrow-left" style="margin-right: 8px;"></i> Kembali ke Pengisian</a>
 
     <?php if ($lengkap && in_array($penilaian['status'], ['DRAFT', 'PERLU_REVISI'])): ?>
         <form action="<?= base_url('/opd/kesimpulan/submit') ?>" method="post" style="display: inline;">
@@ -83,7 +84,7 @@
             <?php if ($penilaian['status'] === 'PERLU_REVISI'): ?>
                 <button type="submit" class="btn btn-warning"
                         onclick="return confirm('Ajukan kembali setelah perbaikan?')">
-                    🔄 Ajukan Ulang Setelah Revisi
+                    <i class="bi bi-arrow-clockwise" style="margin-right: 8px;"></i> Ajukan Ulang Setelah Revisi
                 </button>
             <?php else: ?>
                 <button type="submit" class="btn btn-success"

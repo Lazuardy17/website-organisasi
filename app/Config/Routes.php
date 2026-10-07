@@ -12,7 +12,7 @@ $routes->post('/login/attempt', '\App\Modules\Auth\Controllers\AuthController::a
 $routes->get('/logout', '\App\Modules\Auth\Controllers\AuthController::logout');
 
 // ============ UBAH PASSWORD (Admin & User OPD) ============
-// ⭐ Tambah filter 'identitas' — biar OPD yang belum lengkap tidak bisa akses
+// Tambah filter 'identitas' — biar OPD yang belum lengkap tidak bisa akses
 $routes->get('/ubah-password', '\App\Modules\Auth\Controllers\AuthController::ubahPassword', ['filter' => ['auth', 'identitas']]);
 $routes->post('/ubah-password/simpan', '\App\Modules\Auth\Controllers\AuthController::simpanPassword', ['filter' => ['auth', 'identitas']]);
 
@@ -51,7 +51,7 @@ $routes->group('opd', ['filter' => 'auth:opd'], function ($routes) {
     $routes->get('identitas', '\App\Modules\OPD\Controllers\IdentitasController::index');
     $routes->post('identitas/simpan', '\App\Modules\OPD\Controllers\IdentitasController::simpan');
 
-    // ⭐ Grup dengan filter 'identitas' — TERKUNCI sampai identitas lengkap
+    // Grup dengan filter 'identitas' — TERKUNCI sampai identitas lengkap
     $routes->group('', ['filter' => 'identitas'], function ($routes) {
         $routes->get('dashboard', '\App\Modules\Dashboard\Controllers\DashboardController::opd');
 
@@ -66,8 +66,9 @@ $routes->group('opd', ['filter' => 'auth:opd'], function ($routes) {
         // Kesimpulan & Submit
         $routes->get('kesimpulan', '\App\Modules\Penilaian\Controllers\KesimpulanController::index');
         $routes->post('kesimpulan/submit', '\App\Modules\Penilaian\Controllers\KesimpulanController::submit');
+
+        // Ekspor Laporan (untuk User OPD)
+        $routes->get('laporan', '\App\Modules\Laporan\Controllers\LaporanOpdController::index');
+        $routes->post('laporan/generate', '\App\Modules\Laporan\Controllers\LaporanOpdController::generate');
     });
 });
-
-// ⚠️ HAPUS ROUTE DEBUG SEBELUM PRODUCTION
-// $routes->get('/tes-pdf', function () { ... });

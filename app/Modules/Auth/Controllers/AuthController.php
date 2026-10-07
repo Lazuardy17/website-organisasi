@@ -34,7 +34,7 @@ class AuthController extends BaseController
                     ->where('id', session()->get('opd_id'))
                     ->get()->getRowArray();
 
-                // ⭐ SET SESSION
+                // SET SESSION
                 session()->set('identitas_lengkap', !empty($opd['identitas_lengkap']));
 
                 if ($opd && empty($opd['identitas_lengkap'])) {
@@ -82,7 +82,7 @@ class AuthController extends BaseController
             'opd_id'       => $user['opd_id'],
         ]);
 
-        // ⭐ Set session identitas_lengkap
+        // Set session identitas_lengkap
         if ($user['peran_id'] == 1) {
             session()->set('identitas_lengkap', true);
         } else {

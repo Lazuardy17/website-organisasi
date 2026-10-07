@@ -72,7 +72,7 @@
                                id="username"
                                class="form-control"
                                placeholder="Masukkan Username"
-                               value="<?= session()->getFlashdata('username') ?? '' ?>"    <!-- ⭐ Preserve -->
+                               value="<?= session()->getFlashdata('username') ?? '' ?>"    <!-- Preserve -->
                                required
                                autofocus>
                     </div>

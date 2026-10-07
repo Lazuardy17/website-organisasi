@@ -30,7 +30,7 @@ class IdentitasFilter implements FilterInterface
             }
         }
 
-        // ⭐ CEK DATABASE SETIAP REQUEST (bukan cuma session)
+        // CEK DATABASE SETIAP REQUEST (bukan cuma session)
         $db  = \Config\Database::connect();
         $opd = $db->table('perangkat_daerah')
             ->where('id', session()->get('opd_id'))
@@ -38,7 +38,7 @@ class IdentitasFilter implements FilterInterface
 
         $identitasLengkap = $opd && !empty($opd['identitas_lengkap']);
 
-        // ⭐ UPDATE SESSION — sinkron dengan DB
+        // UPDATE SESSION — sinkron dengan DB
         session()->set('identitas_lengkap', $identitasLengkap);
 
         // Kalau belum lengkap → redirect ke form identitas

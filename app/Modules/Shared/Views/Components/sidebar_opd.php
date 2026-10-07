@@ -36,6 +36,10 @@ $currentUrl = current_url();
            class="<?= (strpos($currentUrl, '/opd/kesimpulan') !== false) ? 'active' : '' ?>">
             <i class="bi bi-file-check"></i> Kesimpulan & Submit
         </a>
+        <a href="<?= base_url('/opd/laporan') ?>"
+           class="<?= (strpos($currentUrl, '/opd/laporan') !== false) ? 'active' : '' ?>">
+            <i class="bi bi-file-earmark-pdf"></i> Ekspor Laporan
+        </a>
 
         <div class="section-title">Pengaturan</div>
         <a href="<?= base_url('/ubah-password') ?>"
@@ -63,6 +67,9 @@ $currentUrl = current_url();
         </a>
         <a href="#" class="disabled" title="Isi identitas terlebih dahulu">
             <i class="bi bi-file-check"></i> Kesimpulan & Submit
+        </a>
+        <a href="#" class="disabled" title="Isi identitas terlebih dahulu">
+            <i class="bi bi-file-earmark-pdf"></i> Ekspor Laporan
         </a>
 
         <div class="section-title">Pengaturan</div>

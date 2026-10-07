@@ -274,7 +274,7 @@
                 loginView.style.display = 'contents';
             }
 
-            // ⭐ AUTO-SHOW LOGIN — kalau ada flashdata error dari controller
+            //  AUTO-SHOW LOGIN — kalau ada flashdata error dari controller
             <?php if (session()->getFlashdata('error')): ?>
                 showLogin();
                 window.addEventListener('load', function() {

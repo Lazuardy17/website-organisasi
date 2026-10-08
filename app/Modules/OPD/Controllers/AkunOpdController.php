@@ -20,14 +20,19 @@ class AkunOpdController extends BaseController
 
     public function index()
     {
+        // 10 akun per halaman (paginate() membaca ?page= dari URL)
+        $akun = $this->akunModel
+            ->select('pengguna.*, perangkat_daerah.nama as nama_opd, perangkat_daerah.kode as kode_opd, perangkat_daerah.nama_kepala, perangkat_daerah.nip_kepala, perangkat_daerah.pangkat_kepala')
+            ->join('perangkat_daerah', 'perangkat_daerah.id = pengguna.opd_id', 'left')
+            ->where('pengguna.peran_id', 2)
+            ->orderBy('perangkat_daerah.id', 'ASC')
+            ->orderBy('pengguna.id', 'ASC')   // urutan kedua agar halaman stabil
+            ->paginate(10);
+
         $data = [
             'title' => 'Manajemen Akun OPD',
-            'akun'  => $this->akunModel
-                ->select('pengguna.*, perangkat_daerah.nama as nama_opd, perangkat_daerah.kode as kode_opd, perangkat_daerah.nama_kepala, perangkat_daerah.nip_kepala, perangkat_daerah.pangkat_kepala')
-                ->join('perangkat_daerah', 'perangkat_daerah.id = pengguna.opd_id', 'left')
-                ->where('pengguna.peran_id', 2)
-                ->orderBy('perangkat_daerah.id', 'ASC')
-                ->findAll(),
+            'akun'  => $akun,
+            'pager' => $this->akunModel->pager,
         ];
 
         return view('App\Modules\OPD\Views\admin\index', $data);

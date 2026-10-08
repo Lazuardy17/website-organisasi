@@ -17,6 +17,7 @@
 <?php if (empty($daftar)): ?>
     <div class="alert alert-info">Belum ada penilaian yang menunggu verifikasi.</div>
 <?php else: ?>
+    <?php $nomorAwal = ($pager->getCurrentPage() - 1) * $pager->getPerPage(); ?>
     <div class="card card-wide">
         <div class="table-responsive">
             <table>
@@ -34,7 +35,7 @@
                 <tbody>
                     <?php foreach ($daftar as $i => $d): ?>
                         <tr>
-                            <td><?= $i + 1 ?></td>
+                            <td><?= $nomorAwal + $i + 1 ?></td>
                             <td class="col-nama"><?= esc($d['nama_opd']) ?></td>
                             <td><?= esc($d['tahun_periode']) ?></td>
                             <td><?= $d['diajukan_pada'] ? date('d M Y H:i', strtotime($d['diajukan_pada'])) : '-' ?></td>
@@ -54,6 +55,7 @@
                 </tbody>
             </table>
         </div>
+        <?= view('App\Modules\Shared\Views\Components\pagination', ['pager' => $pager]) ?>
     </div>
 <?php endif; ?>
 

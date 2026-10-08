@@ -60,6 +60,7 @@
 </div>
 
 <!-- Tabel Rekapitulasi -->
+<?php $nomorAwal = ($pager->getCurrentPage() - 1) * $pager->getPerPage(); ?>
 <div class="card card-wide">
     <h2>Rekapitulasi OPD</h2>
     <div class="table-responsive">
@@ -91,7 +92,7 @@
                             elseif ($d['status'] === 'PERLU_VERIFIKASI_ULANG') $badgeClass = 'badge-verif-ulang';
                         ?>
                         <tr>
-                            <td><?= $i + 1 ?></td>
+                            <td><?= $nomorAwal + $i + 1 ?></td>
                             <td class="col-nama"><?= esc($d['nama_opd']) ?></td>
                             <td><?= $d['diajukan_pada'] ? date('d M Y', strtotime($d['diajukan_pada'])) : '-' ?></td>
                             <td class="skor"><?= $d['total_skor'] > 0 ? number_format($d['total_skor'], 0) : '-' ?></td>
@@ -109,6 +110,7 @@
             </tbody>
         </table>
     </div>
+    <?= view('App\Modules\Shared\Views\Components\pagination', ['pager' => $pager]) ?>
 </div>
 
 <?= $this->endSection() ?>

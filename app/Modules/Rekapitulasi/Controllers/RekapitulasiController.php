@@ -3,6 +3,7 @@
 namespace App\Modules\Rekapitulasi\Controllers;
 
 use App\Controllers\BaseController;
+use App\Modules\Penilaian\Models\PenilaianModel;
 
 class RekapitulasiController extends BaseController
 {
@@ -28,50 +29,55 @@ class RekapitulasiController extends BaseController
             $periodeId = $aktif ? $aktif['id'] : $periodeList[0]['id'];
         }
 
-        // Query dasar: semua penilaian
-        $builder = $db->table('penilaian')
-            ->select('penilaian.*, 
-                      perangkat_daerah.nama as nama_opd, 
-                      perangkat_daerah.kode as kode_opd,
-                      perangkat_daerah.nama_kepala,
-                      periode_penilaian.tahun as tahun_periode')
-            ->join('perangkat_daerah', 'perangkat_daerah.id = penilaian.opd_id', 'left')
-            ->join('periode_penilaian', 'periode_penilaian.id = penilaian.periode_id', 'left');
-
-        // Filter periode
-        if ($periodeId) {
-            $builder->where('penilaian.periode_id', $periodeId);
-        }
-
-        // Filter status
-        if ($status && $status !== 'semua') {
-            $builder->where('penilaian.status', $status);
-        }
-
-        $daftar = $builder->orderBy('perangkat_daerah.id', 'ASC')
-                          ->get()->getResultArray();
-
-        // Statistik ringkasan
-        $totalDinilai        = count($daftar);
-        $jumlahTerverifikasi = 0;
-        $jumlahMenunggu      = 0;
-        $totalSkor           = 0;
-        $jumlahAdaSkor       = 0;
-
-        foreach ($daftar as $d) {
-            if ($d['status'] === 'TERVERIFIKASI') $jumlahTerverifikasi++;
-            if (in_array($d['status'], ['DIKIRIM', 'PERLU_VERIFIKASI_ULANG'])) $jumlahMenunggu++;
-            if ($d['total_skor'] > 0) {
-                $totalSkor += (float) $d['total_skor'];
-                $jumlahAdaSkor++;
+        // Filter periode & status, dipakai oleh tabel DAN statistik
+        $terapkanFilter = function ($query) use ($periodeId, $status) {
+            if ($periodeId) {
+                $query->where('penilaian.periode_id', $periodeId);
             }
-        }
+            if ($status && $status !== 'semua') {
+                $query->where('penilaian.status', $status);
+            }
+            return $query;
+        };
+
+        // Tabel: 10 baris per halaman (paginate() membaca ?page= dari URL;
+        // filter periode_id & status ikut terbawa di link pagination)
+        $model = new PenilaianModel();
+        $model->select('penilaian.*, 
+                        perangkat_daerah.nama as nama_opd, 
+                        perangkat_daerah.kode as kode_opd,
+                        perangkat_daerah.nama_kepala,
+                        periode_penilaian.tahun as tahun_periode')
+              ->join('perangkat_daerah', 'perangkat_daerah.id = penilaian.opd_id', 'left')
+              ->join('periode_penilaian', 'periode_penilaian.id = penilaian.periode_id', 'left');
+
+        $daftar = $terapkanFilter($model)
+            ->orderBy('perangkat_daerah.id', 'ASC')
+            ->orderBy('penilaian.id', 'ASC')   // urutan kedua agar halaman stabil
+            ->paginate(10);
+
+        // Statistik ringkasan: dihitung dari SELURUH data yang lolos filter,
+        // bukan hanya 10 baris di halaman ini.
+        $stat = $terapkanFilter($db->table('penilaian'))
+            ->select("COUNT(*) AS total,
+                      SUM(CASE WHEN penilaian.status = 'TERVERIFIKASI' THEN 1 ELSE 0 END) AS terverifikasi,
+                      SUM(CASE WHEN penilaian.status IN ('DIKIRIM', 'PERLU_VERIFIKASI_ULANG') THEN 1 ELSE 0 END) AS menunggu,
+                      SUM(CASE WHEN penilaian.total_skor > 0 THEN penilaian.total_skor ELSE 0 END) AS jumlah_skor,
+                      SUM(CASE WHEN penilaian.total_skor > 0 THEN 1 ELSE 0 END) AS jumlah_ada_skor", false)
+            ->get()->getRowArray();
+
+        $totalDinilai        = (int) ($stat['total'] ?? 0);
+        $jumlahTerverifikasi = (int) ($stat['terverifikasi'] ?? 0);
+        $jumlahMenunggu      = (int) ($stat['menunggu'] ?? 0);
+        $totalSkor           = (float) ($stat['jumlah_skor'] ?? 0);
+        $jumlahAdaSkor       = (int) ($stat['jumlah_ada_skor'] ?? 0);
 
         $rataRataSkor = ($jumlahAdaSkor > 0) ? ($totalSkor / $jumlahAdaSkor) : 0;
 
         $data = [
             'title'              => 'Rekapitulasi Data',
             'daftar'             => $daftar,
+            'pager'              => $model->pager,
             'periodeList'        => $periodeList,
             'periodeId'          => $periodeId,
             'statusFilter'       => $status ?: 'semua',

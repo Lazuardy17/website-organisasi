@@ -28,9 +28,8 @@ class VerifikasiController extends BaseController
      */
     public function index()
     {
-        $db = \Config\Database::connect();
-
-        $daftar = $db->table('penilaian')
+        // 10 penilaian per halaman (paginate() membaca ?page= dari URL)
+        $daftar = $this->penilaianModel
             ->select('penilaian.*, 
                       perangkat_daerah.nama as nama_opd, 
                       perangkat_daerah.kode as kode_opd,
@@ -40,11 +39,13 @@ class VerifikasiController extends BaseController
             ->join('periode_penilaian', 'periode_penilaian.id = penilaian.periode_id', 'left')
             ->whereIn('penilaian.status', ['DIKIRIM', 'PERLU_VERIFIKASI_ULANG'])
             ->orderBy('penilaian.diajukan_pada', 'ASC')
-            ->get()->getResultArray();
+            ->orderBy('penilaian.id', 'ASC')   // urutan kedua agar halaman stabil
+            ->paginate(10);
 
         $data = [
             'title'  => 'Verifikasi Penilaian',
             'daftar' => $daftar,
+            'pager'  => $this->penilaianModel->pager,
         ];
 
         return view('App\Modules\Verifikasi\Views\index', $data);

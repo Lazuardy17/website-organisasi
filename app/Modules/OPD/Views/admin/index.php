@@ -21,6 +21,9 @@
     </div>
 <?php endif; ?>
 
+<?php /* [PAGINATION 1/3] nomor awal halaman ini (halaman 2 mulai dari 11, dst.) */ ?>
+<?php $nomorAwal = ($pager->getCurrentPage() - 1) * $pager->getPerPage(); ?>
+
 <div class="card card-wide">
     <div class="table-responsive">
         <table style="table-layout: fixed; width: 100%;">
@@ -56,7 +59,8 @@
                 <?php else: ?>
                     <?php foreach ($akun as $i => $a): ?>
                         <tr>
-                            <td style="text-align: center;"><?= $i + 1 ?></td>
+                            <?php /* [PAGINATION 2/3] nomor urut berlanjut antar halaman */ ?>
+                            <td style="text-align: center;"><?= $nomorAwal + $i + 1 ?></td>
                             <td class="col-nama"><?= esc($a['nama_opd'] ?? '-') ?></td>
                             <td><code><?= esc($a['nama_pengguna'] ?? '-') ?></code></td>
                             <td style="white-space: nowrap;"><?= esc($a['nip_kepala'] ?? '-') ?></td>
@@ -77,6 +81,9 @@
             </tbody>
         </table>
     </div>
+
+    <?php /* [PAGINATION 3/3] teks "Menampilkan x-y dari z" + tombol halaman */ ?>
+    <?= view('App\Modules\Shared\Views\Components\pagination', ['pager' => $pager]) ?>
 </div>
 
 <?= $this->endSection() ?>

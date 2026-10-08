@@ -22,8 +22,8 @@ $p5 = fn($n) => round($n * $K5, 3) . 'pt';
 
 // Kalibrasi: kalau baris di PDF web sedikit lebih tinggi/rendah dari Excel,
 // ubah angka ini (satuan unit, mis. -0.4 atau 0.4) lalu ekspor ulang.
-$ADJ_ROW4 = -0.8;   // garis tabel menambah ±0.8 unit per baris
-$ADJ_ROW5 = -0.6;
+$ADJ_ROW4 = -0.9;   // garis tabel menambah ±0.8 unit per baris
+$ADJ_ROW5 = -0.9;
 
 // HASIL UKUR Dompdf 3.1.6: line-height dalam pt tampil ±1,333x lebih besar.
 // Faktor koreksi (kalau nanti Dompdf diperbarui dan sudah normal, ubah jadi 1).
@@ -34,11 +34,16 @@ $l5 = fn($n) => round($n * $K5 * $LHF, 3) . 'pt';
 // Lebar sel di Dompdf = lebar ISI (padding + garis ditambahkan di luar),
 // jadi lebar target dikurangi padding kiri-kanan dan garis.
 $W4 = fn($n) => round(($n - 2 * 2.3 - 0.6) * $K4, 3) . 'pt';
-$W5 = fn($n) => round(($n - 2 * 2.5 - 0.8) * $K5, 3) . 'pt';
+$W5 = fn($n) => round(($n - 3.2 - 0.8) * $K5, 3) . 'pt';   // padding kiri 2.4 + kanan 0.8
 
 // Margin kertas Excel (0.75in atas, 0.7in kiri) dipasang manual lewat padding,
 // karena @page margin tidak diterapkan Dompdf pada hasil ekspor sebelumnya.
-$MARGIN_TOP  = '54pt';
+$MARGIN_TOP  = '54pt';   // Sheet 4
+$MARGIN_TOP5 = '53pt';   // Sheet 5 (hasil ukur: ±1pt lebih rendah dari Excel kalau 54pt)
+
+// Di Excel, halaman Variabel 3 dan 10 dimulai satu baris kosong lebih rendah (±14,3 unit).
+// Kunci = nomor urutan variabel. Hapus isinya kalau tidak ingin meniru kuirk ini.
+$EXTRA_TOP5 = [3 => 14.3, 10 => 14.3];
 $MARGIN_LEFT = '50.4pt';
 
 $totalSkor = 0;
@@ -50,12 +55,24 @@ $kesimpulanText = $penilaian['kesimpulan'] ?? '-';
 $namaOpd = esc(mb_strtoupper($opd['nama'], 'UTF-8'));
 
 // "(outcome)" dicetak miring seperti di Excel
-$indikator = fn($s) => str_ireplace('(outcome)', '(<i>outcome</i>)', esc($s));
+$indikator = fn($s) => str_ireplace('(outcome)', '<span style="white-space:nowrap">(<i>outcome</i>)</span>', esc($s));
 
-// Pecah tautan panjang supaya tidak keluar dari sel (Dompdf tidak punya word-break)
-$pecah = function ($s, $n = 32) {
-    $s = (string) $s;
-    return esc(implode(' ', mb_str_split($s, $n)));
+// Pecah tautan panjang supaya tidak keluar dari sel (Dompdf tidak punya word-break).
+// Pemenggalan memakai <br> (bukan spasi) pada tanda / ? & = - _ terdekat, jadi
+// teks tautan tidak berubah. $max = jumlah karakter maksimum per baris.
+$pecah = function ($s, $max = 30) {
+    $s   = (string) $s;
+    $out = [];
+    while (mb_strlen($s) > $max) {
+        $potong = mb_substr($s, 0, $max);
+        if (preg_match('~^(.*[/?&=_-])~u', $potong, $m) && mb_strlen($m[1]) >= $max * 0.5) {
+            $potong = $m[1];
+        }
+        $out[] = $potong;
+        $s     = mb_substr($s, mb_strlen($potong));
+    }
+    $out[] = $s;
+    return implode('<br>', array_map('esc', $out));
 };
 
 // Blok tanda tangan. $rowH = tinggi baris Excel, $marginLeft = posisi blok.
@@ -113,20 +130,20 @@ $ttd = function (callable $p, callable $l, float $rowH, float $marginLeft) use (
     .t4 td.nb { border: none; }
     .t4 td.rt { text-align: right; }
     .ttl4 { margin-left: <?= $p4(51.2) ?>; width: <?= $p4(570.3) ?>; text-align: center; font-weight: bold;
-            height: <?= $p4(14.55) ?>; line-height: <?= $l4(14.55) ?>; }
+            min-height: <?= $p4(14.55) ?>; line-height: <?= $l4(14.55) ?>; }
 
     /* =====================================================================
        SHEET 5 — FORMULIR   (Bookman Old Style 11, skala 79%)
        Lebar kolom (unit): B 76.7 | C 360.2 | D 85.1 | E 68.2 | F 67.8 | G 207.6  (total 865.6)
     ===================================================================== */
-    .pg5 { font-size: <?= $p5(11) ?>; padding: <?= $MARGIN_TOP ?> 0 0 <?= $MARGIN_LEFT ?>; }
+    .pg5 { font-size: <?= $p5(11) ?>; padding: <?= $MARGIN_TOP5 ?> 0 0 <?= $MARGIN_LEFT ?>; }
     .ttl5 { width: <?= $p5(865.6) ?>; text-align: center; font-weight: bold; font-size: <?= $p5(18) ?>; }
     .vt { height: <?= $p5(14.65) ?>; line-height: <?= $l5(14.65) ?>; padding-left: <?= $p5(2) ?>; }
     .t5 { width: <?= $p5(865.6) ?>; border: <?= round(1.5 * $K5, 3) ?>pt solid #000; }
     .t5 th, .t5 td {
         font-family: 'XBookman', 'XCalibri', serif;
-        padding: 0 <?= $p5(2.5) ?>;
-        line-height: <?= $l5(13.7) ?>;
+        padding: 0 <?= $p5(0.8) ?> 0 <?= $p5(2.4) ?>;
+        line-height: <?= $l5(14.05) ?>;
         vertical-align: middle;
         border: <?= round(0.75 * $K5, 3) ?>pt solid #000;
         overflow: hidden;
@@ -223,10 +240,10 @@ $ttd = function (callable $p, callable $l, float $rowH, float $marginLeft) use (
 
         <?php if ($index === 0): ?>
             <div class="ttl5" style="height:<?= $p5(23.25) ?>; line-height:<?= $l5(23.25) ?>;">FORMULIR PENILAIAN KEMATANGAN PENATAAN PERANGKAT DAERAH KOTA BANJARBARU</div>
-            <div class="ttl5" style="height:<?= $p5(18.95) ?>; line-height:<?= $l5(18.95) ?>;"><?= $namaOpd ?></div>
+            <div class="ttl5" style="min-height:<?= $p5(18.95) ?>; line-height:<?= $l5(18.95) ?>;"><?= $namaOpd ?></div>
             <div style="height:<?= $p5(14.25) ?>;"></div>
         <?php else: ?>
-            <div style="height:<?= $p5(14.25) ?>;"></div>
+            <div style="height:<?= $p5(14.25 + ($EXTRA_TOP5[(int) $v['nomor_urutan']] ?? 0)) ?>;"></div>
         <?php endif; ?>
 
         <div class="vt">VARIABEL <?= esc($v['nomor_urutan']) ?></div>

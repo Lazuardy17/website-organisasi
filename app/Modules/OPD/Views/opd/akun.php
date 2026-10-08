@@ -15,7 +15,7 @@
 <div class="card card-wide">
     <div class="opd-header">
         <div class="opd-name">
-            <div class="opd-icon">🏛️</div>
+            <div class="opd-icon"><i class="bi bi-buildings-fill"></i></div>
             <div class="opd-name-text"><?= esc($opd['nama']) ?></div>
         </div>
         <span class="badge-aktif"><?= esc($opd['status']) ?></span>

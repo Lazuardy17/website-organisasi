@@ -27,11 +27,11 @@
 
 <?php if (empty($periodeList)): ?>
     <div class="alert alert-info">
-        <i class="bi bi-info-circle"></i> Belum ada periode penilaian. Hubungi Admin.
+        <i class="bi bi-info-circle" style="margin-right: 8px;"></i> Belum ada periode penilaian. Hubungi Admin.
     </div>
 <?php elseif (!$adaYangBisaCetak): ?>
     <div class="alert alert-info">
-        <i class="bi bi-info-circle"></i> 
+        <i class="bi bi-info-circle" style="margin-right: 8px;"></i>
         <strong>Belum ada laporan yang bisa dicetak.</strong><br>
         Laporan hanya bisa dicetak setelah penilaian Anda diverifikasi oleh Admin.
         Silakan cek status penilaian di halaman <a href="<?= base_url('/opd/kesimpulan') ?>">Kesimpulan & Submit</a>.
@@ -40,7 +40,7 @@
 
 <!-- Card Form Ekspor -->
 <div class="card card-wide">
-    <h2><i class="bi bi-file-earmark-pdf"></i> Buat Laporan PDF</h2>
+    <h2><i class="bi bi-file-earmark-pdf" style="margin-right: 8px;"></i> Buat Laporan PDF</h2>
 
     <?php if ($adaYangBisaCetak): ?>
         <form action="<?= base_url('/opd/laporan/generate') ?>" method="post" target="_blank">

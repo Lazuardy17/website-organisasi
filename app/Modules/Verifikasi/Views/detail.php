@@ -42,14 +42,14 @@
             <div class="variabel-indikator"><?= esc($d['indikator']) ?></div>
 
             <div class="variabel-bukti">
-                🔗 <strong>Bukti:</strong>
+                <i class="bi bi-link-45deg" style="margin-right: 6px;"></i> <strong>Bukti:</strong>
                 <a href="<?= esc($d['tautan_bukti']) ?>" target="_blank"><?= esc($d['tautan_bukti']) ?></a>
             </div>
 
             <?php if (!empty($d['catatan_revisi'])): ?>
                 <?php foreach ($d['catatan_revisi'] as $cr): ?>
                     <div class="catatan-lama">
-                        ⚠️ <strong>Catatan Sebelumnya:</strong> <?= esc($cr['catatan']) ?>
+                        <i class="bi bi-exclamation-triangle" style="margin-right: 8px;"></i> <strong>Catatan Sebelumnya:</strong> <?= esc($cr['catatan']) ?>
                     </div>
                 <?php endforeach; ?>
             <?php endif; ?>

@@ -11,9 +11,9 @@
 
 <?php if (!empty($catatan_admin)): ?>
     <div class="alert alert-warning">
-        ⚠️ <strong>Ada catatan revisi dari Admin:</strong> Silakan perbaiki penilaian Anda.<br>
+        <i class="bi bi-exclamation-triangle" style="margin-right: 8px;"></i> <strong>Ada catatan revisi dari Admin:</strong> Silakan perbaiki penilaian Anda.<br>
         <a href="<?= base_url('/opd/penilaian') ?>" style="color: #92400e; font-weight: 700;">
-            Lihat & perbaiki sekarang →
+            Lihat & perbaiki sekarang <i class="bi bi-arrow-right"></i>
         </a>
     </div>
 <?php endif; ?>
@@ -54,9 +54,9 @@
         </div>
 
         <?php if ($terisi < 11): ?>
-            <a href="<?= base_url('/opd/penilaian') ?>" class="btn btn-primary">Lanjutkan Pengisian →</a>
+            <a href="<?= base_url('/opd/penilaian') ?>" class="btn btn-primary">Lanjutkan Pengisian <i class="bi bi-arrow-right"></i></a>
         <?php else: ?>
-            <a href="<?= base_url('/opd/kesimpulan') ?>" class="btn btn-primary">Lihat Kesimpulan →</a>
+            <a href="<?= base_url('/opd/kesimpulan') ?>" class="btn btn-primary">Lihat Kesimpulan <i class="bi bi-arrow-right"></i></a>
         <?php endif; ?>
     </div>
 

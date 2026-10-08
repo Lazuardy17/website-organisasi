@@ -45,13 +45,13 @@
             <div class="input-with-icon">
                 <input type="text" name="password" id="password"
                        class="form-control"
-                       placeholder="Ketik kata sandi, atau klik 🎲"
+                       placeholder="Ketik kata sandi baru"
                        required minlength="8">
                 <button type="button" class="icon-btn" id="btn-dadu"
-                        title="Generate password random">🎲</button>
+                        title="Generate password random"><i class="bi bi-dice-5"></i></button>
             </div>
             <small style="color:#6b7280; font-size:12px; display:block; margin-top:6px;">
-                Minimal 8 karakter. Klik 🎲 untuk generate otomatis.
+                Minimal 8 karakter. Klik tombol dadu untuk generate otomatis.
             </small>
         </div>
 

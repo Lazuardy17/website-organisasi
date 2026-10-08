@@ -19,7 +19,7 @@
 <?php if (!empty($catatanUmum)): ?>
     <?php foreach ($catatanUmum as $c): ?>
         <div class="alert alert-warning">
-            ⚠️ <strong>Catatan Revisi dari Admin:</strong><br>
+            <i class="bi bi-exclamation-triangle" style="margin-right: 8px;"></i> <strong>Catatan Revisi dari Admin:</strong><br>
             <?= esc($c['catatan']) ?>
         </div>
     <?php endforeach; ?>
@@ -27,7 +27,7 @@
 
 <?php if (!$lengkap): ?>
     <div class="alert alert-info">
-        ⚠️ Anda baru mengisi <strong><?= $jumlahTerisi ?>/11</strong> variabel.
+        <i class="bi bi-info-circle" style="margin-right: 8px;"></i> Anda baru mengisi <strong><?= $jumlahTerisi ?>/11</strong> variabel.
         Silakan lengkapi semua variabel terlebih dahulu sebelum submit.
     </div>
 <?php endif; ?>

@@ -93,13 +93,13 @@
                 <h2 style="color:#013D58; margin-top:12px; font-size:24px;">Akun berhasil dibuat</h2>
             </div>
 
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; text-align:left; margin:24px 0;">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; text-align:center; margin:24px 0;">
                 <div>
                     <div style="color:#6b7280; font-size:13px; margin-bottom:4px;">Username</div>
                     <div style="color:#013D58; font-size:20px; font-weight:600;" id="popup-username"><?= esc($akunBaru['username']) ?></div>
                 </div>
                 <div>
-                    <div style="color:#6b7280; font-size:13px; margin-bottom:4px;">Password sementara</div>
+                    <div style="color:#6b7280; font-size:13px; margin-bottom:4px;">Password</div>
                     <div style="color:#013D58; font-size:20px; font-weight:600;" id="popup-password"><?= esc($akunBaru['password']) ?></div>
                 </div>
             </div>

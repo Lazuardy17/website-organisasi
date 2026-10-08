@@ -18,7 +18,7 @@
 
 <?php if ($penilaian['status'] === 'PERLU_REVISI'): ?>
     <div class="alert alert-warning">
-        ⚠️ <strong>Penilaian Anda sedang dalam status PERLU REVISI.</strong>
+        <i class="bi bi-exclamation-triangle" style="margin-right: 8px;"></i> Penilaian Anda sedang dalam status <strong>PERLU REVISI.</strong>
         Silakan perbaiki variabel yang ditandai, lalu submit ulang.
     </div>
 <?php endif; ?>
@@ -60,7 +60,7 @@
         <?php if (!empty($v['catatan_revisi'])): ?>
             <?php foreach ($v['catatan_revisi'] as $cr): ?>
                 <div class="catatan-revisi-box">
-                    <strong>⚠️ Catatan Revisi dari Admin:</strong>
+                    <strong> <i class="bi bi-exclamation-triangle" style="margin-right: 8px;"></i> Catatan Revisi dari Admin:</strong>
                     <span><?= esc($cr['catatan']) ?></span>
                 </div>
             <?php endforeach; ?>
@@ -90,7 +90,7 @@
                     </div>
 
                     <div class="bukti-field" id="bukti-<?= $t['id'] ?>" style="display: <?= $terpilih ? 'block' : 'none' ?>;">
-                        <label>🔗 Link Bukti</label>
+                        <label><i class="bi bi-link-45deg" style="margin-right: 6px;"></i> Link Bukti</label>
                         <input type="text"
                             name="tautan_bukti"
                             placeholder="https://drive.google.com/..."

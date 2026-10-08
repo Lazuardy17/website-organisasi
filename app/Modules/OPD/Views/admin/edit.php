@@ -56,9 +56,9 @@
             <div class="input-with-icon">
                 <input type="text" name="password" id="password"
                        class="form-control"
-                       placeholder="Kata sandi baru (opsional)">
+                       placeholder="Kata sandi baru">
                 <button type="button" class="icon-btn" id="btn-dadu"
-                        title="Generate password random">🎲</button>
+                        title="Generate password random"><i class="bi bi-dice-5"></i></button>
             </div>
         </div>
 

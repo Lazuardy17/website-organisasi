@@ -4,7 +4,8 @@
 
 <div class="page-header">
     <h1>Detail Verifikasi</h1>
-    <a href="<?= base_url('/admin/verifikasi') ?>" class="btn btn-secondary">← Kembali</a>
+    <a href="<?= base_url('/admin/verifikasi') ?>" class="btn btn-secondary">
+        <i class="bi bi-arrow-left" style="margin-right: 8px;"></i> Kembali</a>
 </div>
 
 <?php if (session()->getFlashdata('error')): ?>
@@ -78,7 +79,7 @@
         <div class="action-row">
             <div></div>
             <button type="submit" class="btn btn-success" onclick="return confirm('Yakin verifikasi penilaian ini?')">
-                ✓ Verifikasi & Setujui
+                <i class="bi bi-check-circle" style="margin-right: 8px;"></i> Verifikasi & Setujui
             </button>
         </div>
     </form>
@@ -97,7 +98,7 @@
         <div class="action-row">
             <div></div>
             <button type="submit" class="btn btn-warning" onclick="return confirm('Kembalikan penilaian untuk direvisi?')">
-                ⚠ Minta Revisi
+                <i class="bi bi-exclamation-triangle" style="margin-right: 8px;"></i> Minta Revisi
             </button>
         </div>
     </form>

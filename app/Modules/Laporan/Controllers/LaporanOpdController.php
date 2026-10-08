@@ -34,7 +34,7 @@ class LaporanOpdController extends BaseController
                 ->where('periode_id', $p['id'])
                 ->get()->getRowArray();
 
-            $p['status']    = $penilaian['status'] ?? null;
+            $p['status']     = $penilaian['status'] ?? null;
             $p['total_skor'] = $penilaian['total_skor'] ?? null;
             $p['kesimpulan'] = $penilaian['kesimpulan'] ?? null;
             $p['bisa_cetak'] = ($p['status'] === 'TERVERIFIKASI');
@@ -42,7 +42,7 @@ class LaporanOpdController extends BaseController
         unset($p);
 
         // Ambil preview 11 variabel + skor dari periode default (yang TERVERIFIKASI terbaru)
-        $preview = [];
+        $preview        = [];
         $periodePreview = null;
         foreach ($periodeList as $p) {
             if ($p['bisa_cetak']) {
@@ -172,31 +172,123 @@ class LaporanOpdController extends BaseController
         }
         unset($v);
 
-        // Render HTML dari view
-        $html = view('App\Modules\Laporan\Views\opd_pdf', [
+        $dataView = [
             'opd'          => $opd,
             'periode'      => $periode,
             'penilaian'    => $penilaian,
             'detail'       => $detail,
             'variabelList' => $variabelList,
-            'format'       => $format,
-        ]);
+        ];
 
-        // Konfigurasi Dompdf
+        // Sheet 4 = Letter portrait, Sheet 5 = Letter landscape.
+        // Format gabungan = dua PDF dirender terpisah lalu digabung (Dompdf
+        // tidak bisa mencampur orientasi dalam satu dokumen).
+        if ($format === 'sheet4') {
+            $pdf = $this->renderPdf('sheet4', $dataView);
+        } elseif ($format === 'sheet5') {
+            $pdf = $this->renderPdf('sheet5', $dataView);
+        } else {
+            $pdf = $this->gabungkanPdf([
+                $this->renderPdf('sheet4', $dataView),
+                $this->renderPdf('sheet5', $dataView),
+            ]);
+        }
+
+        $namaFile = 'laporan-' . strtolower($opd['kode']) . '-' . $periode['tahun'] . '.pdf';
+
+        return $this->response
+            ->setHeader('Content-Type', 'application/pdf')
+            ->setHeader('Content-Disposition', 'attachment; filename="' . $namaFile . '"')
+            ->setBody($pdf);
+    }
+
+    /**
+     * Render satu view ke string PDF (Letter).
+     */
+    private function renderPdf(string $format, array $dataView): string
+    {
+        $fontDir = WRITEPATH . 'fonts';
+
         $options = new Options();
         $options->set('isRemoteEnabled', true);
         $options->set('isHtml5ParserEnabled', true);
+        $options->set('isFontSubsettingEnabled', true);
+        $options->set('chroot', ROOTPATH);
+        $options->set('fontDir', $fontDir);
+        $options->set('fontCache', $fontDir);
 
         $dompdf = new Dompdf($options);
+        $this->daftarkanFont($dompdf, $fontDir);
+
+        $html = view('App\Modules\Laporan\Views\opd_pdf', $dataView + ['format' => $format]);
+
         $dompdf->loadHtml($html);
-        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->setPaper('letter', $format === 'sheet5' ? 'landscape' : 'portrait');
         $dompdf->render();
 
-        // Nama file
-        $namaFile = 'laporan-' . strtolower($opd['kode']) . '-' . $periode['tahun'] . '.pdf';
+        return $dompdf->output();
+    }
 
-        // Output ke browser (download)
-        $dompdf->stream($namaFile, ['Attachment' => true]);
-        exit;
+    /**
+     * Daftarkan font Calibri & Bookman Old Style ke Dompdf (hanya sekali;
+     * hasilnya disimpan di writable/fonts/installed-fonts.json).
+     */
+    private function daftarkanFont(Dompdf $dompdf, string $fontDir): void
+    {
+        $fm = $dompdf->getFontMetrics();
+
+        $daftar = [
+            ['XCalibri', 'normal', 'normal', 'calibri.ttf'],
+            ['XCalibri', 'bold',   'normal', 'calibrib.ttf'],
+            ['XBookman', 'normal', 'normal', 'bookos.ttf'],
+            ['XBookman', 'bold',   'normal', 'bookosb.ttf'],
+            ['XBookman', 'normal', 'italic', 'bookosi.ttf'],
+            ['XBookman', 'bold',   'italic', 'bookosbi.ttf'],
+        ];
+
+        foreach ($daftar as [$family, $weight, $style, $file]) {
+            $path = $fontDir . DIRECTORY_SEPARATOR . $file;
+            if (!is_file($path)) {
+                log_message('error', 'Font tidak ditemukan: ' . $path);
+                continue;
+            }
+
+            // Lewati kalau varian ini sudah terdaftar
+            $sudah = $fm->getFamily(strtolower($family));
+            $key   = ($weight === 'bold' ? 'bold' : 'normal') . ($style === 'italic' ? '_italic' : '');
+            if ($key === 'normal_italic') {
+                $key = 'italic';
+            }
+            if (is_array($sudah) && isset($sudah[$key])) {
+                continue;
+            }
+
+            $fm->registerFont(
+                ['family' => $family, 'weight' => $weight, 'style' => $style],
+                $path
+            );
+        }
+    }
+
+    /**
+     * Gabungkan beberapa PDF (string) menjadi satu, ukuran & orientasi
+     * tiap halaman dipertahankan. Butuh: composer require setasign/fpdi setasign/fpdf
+     */
+    private function gabungkanPdf(array $daftarPdf): string
+    {
+        $fpdi = new \setasign\Fpdi\Fpdi();
+        $fpdi->SetAutoPageBreak(false);
+
+        foreach ($daftarPdf as $pdfString) {
+            $jumlah = $fpdi->setSourceFile(\setasign\Fpdi\PdfParser\StreamReader::createByString($pdfString));
+            for ($n = 1; $n <= $jumlah; $n++) {
+                $tpl  = $fpdi->importPage($n);
+                $size = $fpdi->getTemplateSize($tpl);
+                $fpdi->AddPage($size['orientation'], [$size['width'], $size['height']]);
+                $fpdi->useTemplate($tpl);
+            }
+        }
+
+        return $fpdi->Output('S');
     }
 }

@@ -95,7 +95,7 @@
 
             <div class="btn-group">
                 <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-download"></i> Buat & Unduh Laporan PDF
+                    <i class="bi bi-download" style="margin-right: 8px;"></i> Buat & Unduh Laporan PDF
                 </button>
             </div>
         </form>
@@ -105,67 +105,5 @@
         </p>
     <?php endif; ?>
 </div>
-
-<!-- Card Preview Penilaian -->
-<?php if ($periodePreview && !empty($preview)): ?>
-    <div class="card card-wide" style="margin-top: 20px;">
-        <h2>
-            <i class="bi bi-eye"></i> Preview Penilaian 
-            (<?= esc($periodePreview['tahun']) ?>)
-        </h2>
-
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 50px; text-align: center;">No</th>
-                        <th>Variabel</th>
-                        <th style="width: 120px; text-align: center;">Tingkat</th>
-                        <th style="width: 80px; text-align: center;">Skor</th>
-                        <th style="width: 120px; text-align: center;">Bukti Dukung</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($preview as $i => $p): ?>
-                        <tr>
-                            <td style="text-align: center;"><?= $i + 1 ?></td>
-                            <td><?= esc($p['nama_variabel']) ?></td>
-                            <td style="text-align: center;">
-                                <span class="badge badge-terverifikasi"><?= esc($p['nama_tingkat']) ?></span>
-                            </td>
-                            <td style="text-align: center; font-weight: 700; color: var(--navy);">
-                                <?= number_format($p['nilai_skor'], 0) ?>
-                            </td>
-                            <td style="text-align: center;">
-                                <?= !empty($p['tautan_bukti'] ?? '') ? '<span class="badge badge-terverifikasi">Ada</span>' : '<span class="badge badge-perlu-revisi">Tidak Ada</span>' ?>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-
-                    <tr style="background: #f0f9ff; font-weight: 700;">
-                        <td colspan="3" style="text-align: right; color: var(--navy);">TOTAL SKOR</td>
-                        <td style="text-align: center; color: var(--navy); font-size: 16px;">
-                            <?= number_format($periodePreview['total_skor'], 0) ?>
-                        </td>
-                        <td></td>
-                    </tr>
-
-                    <tr style="background: #dcfce7; font-weight: 700;">
-                        <td colspan="3" style="text-align: right; color: #166534;">KESIMPULAN</td>
-                        <td colspan="2" style="text-align: center; color: #166534;">
-                            <?= esc($periodePreview['kesimpulan'] ?? '-') ?>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="info-box" style="margin-top: 16px;">
-            <i class="bi bi-info-circle-fill"></i>
-            <strong>Catatan:</strong> Preview di atas adalah hasil penilaian Anda yang sudah diverifikasi.
-            Klik tombol <strong>Buat & Unduh Laporan PDF</strong> di atas untuk mengunduh file lengkap.
-        </div>
-    </div>
-<?php endif; ?>
 
 <?= $this->endSection() ?>

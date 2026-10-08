@@ -94,18 +94,7 @@
                         <input type="text"
                             name="tautan_bukti"
                             placeholder="https://drive.google.com/..."
-                            value="<?= $terpilih ? esc($v['tautan_bukti']) : '' ?>">
-                        
-                        <?php if ($terpilih && !empty($v['tautan_bukti'])): ?>
-                            <div style="margin-top: 8px; font-size: 13px;">
-                                <a href="<?= esc($v['tautan_bukti']) ?>" 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                style="color: #2563eb; text-decoration: underline;">
-                                    Buka link bukti →
-                                </a>
-                            </div>
-                        <?php endif; ?>
+                            value="<?= $terpilih ? esc($v['tautan_bukti']) : '' ?>">    
                     </div>
                 </label>
             <?php endforeach; ?>

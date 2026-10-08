@@ -94,9 +94,11 @@
             <?php endif; ?>
         </form>
     <?php elseif ($penilaian['status'] === 'DIKIRIM'): ?>
-        <button class="btn btn-primary" disabled>✓ Sudah Dikirim ke Admin</button>
+        <button class="btn btn-primary" disabled>
+            <i class="bi bi-send-check" style="margin-right: 8px;"></i> Sudah Dikirim ke Admin</button>
     <?php elseif ($penilaian['status'] === 'TERVERIFIKASI'): ?>
-        <button class="btn btn-success" disabled>✓ Sudah Terverifikasi</button>
+        <button class="btn btn-success" disabled>
+            <i class="bi bi-check-circle" style="margin-right: 8px;"></i> Sudah Terverifikasi</button>
     <?php else: ?>
         <button class="btn" disabled>Lengkapi 11 Variabel Dulu</button>
     <?php endif; ?>

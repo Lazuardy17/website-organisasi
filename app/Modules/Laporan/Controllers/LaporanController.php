@@ -117,7 +117,7 @@ class LaporanController extends BaseController
         }
         $namaFile .= '.pdf';
 
-        // Output ke browser (download)
+        // Output ke browser
         $dompdf->stream($namaFile, ['Attachment' => true]);
         exit;
     }

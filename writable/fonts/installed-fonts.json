@@ -1,0 +1,12 @@
+{
+    "xcalibri": {
+        "normal": "C:\\laragon\\www\\website-organisasi\\writable\\fonts\/xcalibri_normal_db13b126b2e3f85f4d352a47635519c3",
+        "bold": "xcalibri_bold_4a5040410728ac41c9bd59faa52be50b"
+    },
+    "xbookman": {
+        "normal": "C:\\laragon\\www\\website-organisasi\\writable\\fonts\/xbookman_normal_f26a70564d15c6ccc0d1f0d87749bbc1",
+        "bold": "C:\\laragon\\www\\website-organisasi\\writable\\fonts\/xbookman_bold_8a4c5abd1adb8ee86f5f3d538aea501b",
+        "italic": "C:\\laragon\\www\\website-organisasi\\writable\\fonts\/xbookman_italic_a83adcd58fb8f7407394690590f20bfd",
+        "bold_italic": "xbookman_bold_italic_592e7ae1050121924b6dac2d22840ffd"
+    }
+}

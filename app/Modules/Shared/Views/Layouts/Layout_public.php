@@ -288,6 +288,7 @@
             if (navBeranda) {
                 navBeranda.addEventListener('click', function(e) {
                     e.preventDefault();
+                    showTentang();
                     window.scrollTo({
                         top: 0,
                         behavior: 'smooth'

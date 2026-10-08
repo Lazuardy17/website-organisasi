@@ -803,6 +803,59 @@
         .toggle-password.aktif svg {
             stroke: #dc2626;
         }
+
+        /* ===== Radio Group ===== */
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px 18px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #fff;
+        }
+
+        .radio-option:hover {
+            border-color: #93c5fd;
+            background: #f9fafb;
+        }
+
+        .radio-option input[type="radio"] {
+            margin-top: 2px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .radio-option:has(input[type="radio"]:checked) {
+            border-color: var(--navy);
+            background: #f0f7ff;
+        }
+
+        .radio-option:has(input[type="radio"]:checked) .radio-label strong {
+            color: var(--navy);
+        }
+
+        .radio-label {
+            flex: 1;
+        }
+
+        .radio-label strong {
+            color: #374151;
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1.5;
+        }
     </style>
 </head>
 

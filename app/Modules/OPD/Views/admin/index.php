@@ -97,7 +97,7 @@
         <div style="background:#fff; border-radius:16px; padding:40px; max-width:600px; width:90%; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
             <div style="margin-bottom:20px;">
                 <i class="bi bi-shield-lock-fill" style="font-size:48px; color:#013D58;"></i>
-                <h2 style="color:#013D58; margin-top:12px; font-size:24px;">Akun berhasil dibuat</h2>
+                <h2 style="color:#013D58; margin-top:12px; font-size:24px;"><?= !empty($akunBaru['diperbarui']) ? 'Akun berhasil diperbarui' : 'Akun berhasil dibuat' ?></h2>
             </div>
 
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; text-align:center; margin:24px 0;">
@@ -107,7 +107,7 @@
                 </div>
                 <div>
                     <div style="color:#6b7280; font-size:13px; margin-bottom:4px;">Password</div>
-                    <div style="color:#013D58; font-size:20px; font-weight:600;" id="popup-password"><?= esc($akunBaru['password']) ?></div>
+                    <div style="color:#013D58; font-size:20px; font-weight:600;" id="popup-password"><?= !empty($akunBaru['password']) ? esc($akunBaru['password']) : '(tidak diubah)' ?></div>
                 </div>
             </div>
 

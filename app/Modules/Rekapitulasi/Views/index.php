@@ -34,7 +34,6 @@
             </div>
 
             <button type="submit" class="btn-filter">Terapkan</button>
-            <a href="<?= base_url('/admin/rekapitulasi') ?>" class="btn-reset">Reset</a>
         </div>
     </form>
 </div>

@@ -246,6 +246,14 @@ class AkunOpdController extends BaseController
 
         $this->akunModel->update($id, $updatePengguna);
 
+        // Popup info akun (dipakai ulang dari popup "akun baru").
+        // password = null berarti kata sandi tidak diubah.
+        session()->setFlashdata('akun_baru', [
+            'username'   => $namaPengguna,
+            'password'   => $password ?: null,
+            'diperbarui' => true,
+        ]);
+
         return redirect()->to('/admin/akun-opd')->with('success', 'Akun berhasil diperbarui.');
     }
 

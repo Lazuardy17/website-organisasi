@@ -24,6 +24,12 @@
         </div>
 
         <div class="form-group">
+            <label>Jabatan</label>
+            <input type="text" class="form-control"
+                value="<?= esc($opd['nomenklatur_jabatan'] ?? '') ?>" readonly>
+        </div>
+
+        <div class="form-group">
             <label for="nama_kepala">Kepala PD</label>
             <input type="text" name="nama_kepala" id="nama_kepala" 
                    class="form-control" 

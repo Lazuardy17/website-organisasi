@@ -30,15 +30,15 @@
         <?= csrf_field() ?>
 
         <div class="form-group">
-            <label for="nip_kepala">NIP</label>
-            <input type="text" name="nip_kepala" id="nip_kepala"
-                   class="form-control" value="<?= esc($opd['nip_kepala'] ?? '') ?>" required>
-        </div>
-
-        <div class="form-group">
-            <label for="nama">Perangkat Daerah</label>
+            <label for="nama">Nama OPD</label>
             <input type="text" name="nama" id="nama"
                    class="form-control" value="<?= esc($opd['nama']) ?>" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Jabatan</label>
+            <input type="text" class="form-control"
+                value="<?= esc($opd['nomenklatur_jabatan'] ?? '') ?>" required>
         </div>
 
         <div class="form-group">
@@ -52,6 +52,12 @@
             <input type="text" name="pangkat_kepala" id="pangkat_kepala"
                    class="form-control" value="<?= esc($opd['pangkat_kepala'] ?? '') ?>"
                    placeholder="Cth: Pembina / IV a" required>
+        </div>
+
+        <div class="form-group">
+            <label for="nip_kepala">NIP</label>
+            <input type="text" name="nip_kepala" id="nip_kepala"
+                   class="form-control" value="<?= esc($opd['nip_kepala'] ?? '') ?>" required>
         </div>
 
         <div class="btn-group">

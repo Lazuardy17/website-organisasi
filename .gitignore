@@ -63,6 +63,10 @@ Vagrantfile
 /writable/debugbar/*
 !/writable/debugbar/index.html
 
+# Font untuk Dompdf (Calibri, Bookman = font Microsoft berlisensi) + cache bawaan Dompdf.
+# Salin font secara manual ke server; jangan di-commit.
+/writable/fonts/*
+
 php_errors.log
 
 #-------------------------

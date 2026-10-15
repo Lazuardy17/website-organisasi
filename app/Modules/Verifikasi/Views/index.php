@@ -18,6 +18,11 @@
     <div class="alert alert-info">Belum ada penilaian yang menunggu verifikasi.</div>
 <?php else: ?>
     <?php $nomorAwal = ($pager->getCurrentPage() - 1) * $pager->getPerPage(); ?>
+    <?php
+    // Alamat halaman ini (beserta filter & nomor halaman) untuk tombol "Kembali" di halaman detail
+    $qs      = service('request')->getUri()->getQuery();
+    $kembali = '/' . uri_string() . ($qs !== '' ? '?' . $qs : '');
+    ?>
     <div class="card card-wide">
         <div class="table-responsive">
             <table>
@@ -46,7 +51,7 @@
                                 </span>
                             </td>
                             <td class="col-aksi">
-                                <a href="<?= base_url('/admin/verifikasi/detail/' . $d['id']) ?>" class="btn btn-primary">
+                                <a href="<?= base_url('/admin/verifikasi/detail/' . $d['id']) . '?kembali=' . urlencode($kembali) ?>" class="btn btn-primary">
                                     Lihat Detail
                                 </a>
                             </td>

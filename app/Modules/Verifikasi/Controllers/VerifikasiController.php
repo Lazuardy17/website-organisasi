@@ -84,11 +84,19 @@ class VerifikasiController extends BaseController
 
         $riwayat = $this->verifikasiModel->getByPenilaian($id);
 
+        // Tujuan tombol "Kembali": halaman asal (Rekapitulasi / Verifikasi / Dashboard).
+        // Hanya alamat internal yang diizinkan; selain itu kembali ke daftar verifikasi.
+        $kembali = (string) $this->request->getGet('kembali');
+        if (!preg_match('#^/admin/(rekapitulasi|verifikasi|dashboard)(\?[^\r\n]*)?$#', $kembali)) {
+            $kembali = '/admin/verifikasi';
+        }
+
         $data = [
             'title'     => 'Detail Verifikasi',
             'penilaian' => $penilaian,
             'detail'    => $detail,
             'riwayat'   => $riwayat,
+            'kembali'   => $kembali,
         ];
 
         return view('App\Modules\Verifikasi\Views\detail', $data);

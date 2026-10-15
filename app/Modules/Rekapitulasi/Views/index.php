@@ -60,6 +60,11 @@
 
 <!-- Tabel Rekapitulasi -->
 <?php $nomorAwal = ($pager->getCurrentPage() - 1) * $pager->getPerPage(); ?>
+<?php
+// Alamat halaman ini (beserta filter & nomor halaman) untuk tombol "Kembali" di halaman detail
+$qs      = service('request')->getUri()->getQuery();
+$kembali = '/' . uri_string() . ($qs !== '' ? '?' . $qs : '');
+?>
 <div class="card card-wide">
     <h2>Rekapitulasi OPD</h2>
     <div class="table-responsive">
@@ -99,7 +104,7 @@
                                 <span class="badge <?= $badgeClass ?>"><?= esc($d['status']) ?></span>
                             </td>
                             <td class="col-aksi">
-                                <a href="<?= base_url('/admin/verifikasi/detail/' . $d['id']) ?>" class="btn">
+                                <a href="<?= base_url('/admin/verifikasi/detail/' . $d['id']) . '?kembali=' . urlencode($kembali) ?>" class="btn">
                                     Lihat Detail
                                 </a>
                             </td>

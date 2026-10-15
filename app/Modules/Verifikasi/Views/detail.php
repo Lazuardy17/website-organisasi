@@ -3,8 +3,8 @@
 <?= $this->section('content') ?>
 
 <div class="page-header">
-    <h1>Detail Verifikasi</h1>
-    <a href="<?= base_url('/admin/verifikasi') ?>" class="btn btn-secondary">
+    <h1>Detail Penilaian</h1>
+    <a href="<?= esc(rtrim(base_url(), '/') . $kembali, 'attr') ?>" class="btn btn-secondary">
         <i class="bi bi-arrow-left" style="margin-right: 8px;"></i> Kembali</a>
 </div>
 

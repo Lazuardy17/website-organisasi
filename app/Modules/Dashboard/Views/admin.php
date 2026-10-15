@@ -57,7 +57,7 @@
                                 </span>
                             </td>
                             <td style="text-align: center;">
-                                <a href="<?= base_url('/admin/verifikasi/detail/' . $a['id']) ?>" class="btn">Verifikasi</a>
+                                <a href="<?= base_url('/admin/verifikasi/detail/' . $a['id']) . '?kembali=' . urlencode('/admin/dashboard') ?>" class="btn">Lihat Detail</a>
                             </td>
                         </tr>
                     <?php endforeach; ?>

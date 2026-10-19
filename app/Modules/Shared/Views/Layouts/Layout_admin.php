@@ -201,7 +201,7 @@
 
         .card-wide {
             max-width: 100%;
-            margin: 0;
+            margin: 0px;
             width: 100%;
         }
 
@@ -856,6 +856,8 @@
             font-weight: 600;
             line-height: 1.5;
         }
+
+        .halaman-detail-verifikasi .card-wide { margin-top: 20px; }
     </style>
 </head>
 

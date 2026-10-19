@@ -63,7 +63,7 @@
                 <?php else: ?>
                     <?php foreach ($detail as $d): ?>
                         <tr>
-                            <td><?= esc($d['nama_variabel']) ?></td>
+                            <td ><?= esc($d['nomor_urutan']) ?>. <?= esc($d['nama_variabel']) ?></td>
                             <td class="skor"><?= number_format($d['nilai_skor'], 0) ?></td>
                         </tr>
                     <?php endforeach; ?>

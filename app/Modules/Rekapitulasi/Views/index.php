@@ -59,30 +59,70 @@
 </div>
 
 <!-- Tabel Rekapitulasi -->
+<?php /* [PAGINATION 1/3] nomor awal halaman ini (halaman 2 mulai dari 11, dst.) */ ?>
 <?php $nomorAwal = ($pager->getCurrentPage() - 1) * $pager->getPerPage(); ?>
 <?php
 // Alamat halaman ini (beserta filter & nomor halaman) untuk tombol "Kembali" di halaman detail
 $qs      = service('request')->getUri()->getQuery();
 $kembali = '/' . uri_string() . ($qs !== '' ? '?' . $qs : '');
 ?>
+
 <div class="card card-wide">
     <h2>Rekapitulasi OPD</h2>
+
+    <!-- Urutan tabel (periode & status dibawa lewat input tersembunyi; halaman kembali ke 1) -->
+    <form action="<?= base_url('/admin/rekapitulasi') ?>" method="get" class="filter-row" style="align-items: center; margin-bottom: 16px;">
+        <input type="hidden" name="periode_id" value="<?= esc($periodeId) ?>">
+        <input type="hidden" name="status" value="<?= esc($statusFilter) ?>">
+
+        <label for="urutkan" style="color: var(--navy); font-size: 14px; font-weight: 600;">Urutkan berdasarkan:</label>
+
+        <div class="filter-group">
+            <select name="urutkan" id="urutkan" onchange="this.form.submit()">
+                <option value="id_opd" <?= $urutkan === 'id_opd' ? 'selected' : '' ?>>ID OPD</option>
+                <option value="skor" <?= $urutkan === 'skor' ? 'selected' : '' ?>>Skor</option>
+                <option value="perubahan" <?= $urutkan === 'perubahan' ? 'selected' : '' ?>>Perubahan Terakhir</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <select name="arah" id="arah" aria-label="Arah urutan" onchange="this.form.submit()" style="min-width: 140px;">
+                <option value="asc" <?= $arah === 'asc' ? 'selected' : '' ?>>Menaik</option>
+                <option value="desc" <?= $arah === 'desc' ? 'selected' : '' ?>>Menurun</option>
+            </select>
+        </div>
+
+        <noscript><button type="submit" class="btn-filter">Terapkan</button></noscript>
+    </form>
+
     <div class="table-responsive">
-        <table>
+        <table style="table-layout: fixed; width: 100%;">
+            <colgroup>
+                <col style="width: 5%;">    <!-- No -->
+                <col style="width: 15%;">   <!-- Nama OPD -->
+                <col style="width: 10%;">   <!-- Tanggal Submit -->
+                <col style="width: 15%;">   <!-- Perubahan Terakhir -->
+                <col style="width: 5%;">    <!-- Skor -->
+                <col style="width: 6%;">   <!-- Predikat -->
+                <col style="width: 10%;">   <!-- Status -->
+                <col style="width: 12%;">   <!-- Aksi -->
+            </colgroup>
             <thead>
                 <tr>
-                    <th style="width: 50px;">No</th>
-                    <th>Nama OPD</th>
-                    <th style="width: 150px;">Tanggal Submit</th>
-                    <th style="width: 100px;">Skor</th>
-                    <th style="width: 200px;">Status</th>
-                    <th style="width: 130px; text-align: center;">Aksi</th>
+                    <th style="text-align: center;">No</th>
+                    <th style="text-align: center;">Nama OPD</th>
+                    <th style="text-align: center;">Tanggal Submit</th>
+                    <th style="text-align: center;">Perubahan Terakhir</th>
+                    <th style="text-align: center;">Skor</th>
+                    <th style="text-align: center;">Predikat</th>
+                    <th style="text-align: center;">Status</th>
+                    <th style="text-align: center;">Aksi</th>
                 </tr>
             </thead>
             <tbody>
                 <?php if (empty($daftar)): ?>
                     <tr>
-                        <td colspan="6" class="empty-row">
+                        <td colspan="9" class="empty-row">
                             Belum ada data penilaian untuk filter ini.
                         </td>
                     </tr>
@@ -96,16 +136,18 @@ $kembali = '/' . uri_string() . ($qs !== '' ? '?' . $qs : '');
                             elseif ($d['status'] === 'PERLU_VERIFIKASI_ULANG') $badgeClass = 'badge-verif-ulang';
                         ?>
                         <tr>
-                            <td><?= $nomorAwal + $i + 1 ?></td>
-                            <td class="col-nama"><?= esc($d['nama_opd']) ?></td>
-                            <td><?= $d['diajukan_pada'] ? date('d M Y', strtotime($d['diajukan_pada'])) : '-' ?></td>
-                            <td class="skor"><?= $d['total_skor'] > 0 ? number_format($d['total_skor'], 0) : '-' ?></td>
-                            <td>
-                                <span class="badge <?= $badgeClass ?>"><?= esc($d['status']) ?></span>
+                            <?php /* [PAGINATION 2/3] nomor urut berlanjut antar halaman */ ?>
+                            <td style="text-align: center;"><?= $nomorAwal + $i + 1 ?></td>
+                            <td class="col-nama"><?= esc($d['nama_opd'] ?? '-') ?></td>
+                            <td style="text-align: center;"><?= tanggal_indonesia($d['diajukan_pada']) ?></td>
+                            <td style="text-align: center;"><?= tanggal_indonesia($d['diperbarui_pada'] ?: $d['dibuat_pada'], true) ?></td>
+                            <td class="skor" style="text-align: center;"><?= $d['total_skor'] > 0 ? number_format($d['total_skor'], 0) : '-' ?></td>
+                            <td style="text-align: center;"><?= esc($d['kesimpulan'] ?: '-') ?></td>
+                            <td style="text-align: center;">
+                                <span class="badge <?= $badgeClass ?>"><?= esc(str_replace('_', ' ', $d['status'])) ?></span>
                             </td>
-                            <td class="col-aksi">
-                                <a href="<?= base_url('/admin/verifikasi/detail/' . $d['id']) . '?kembali=' . urlencode($kembali) ?>" class="btn">
-                                    Lihat Detail
+                            <td style="text-align: center;">
+                                <a href="<?= base_url('/admin/verifikasi/detail/' . $d['id']) . '?kembali=' . urlencode($kembali) ?>" class="btn btn-primary">Lihat Detail
                                 </a>
                             </td>
                         </tr>
@@ -114,6 +156,8 @@ $kembali = '/' . uri_string() . ($qs !== '' ? '?' . $qs : '');
             </tbody>
         </table>
     </div>
+
+    <?php /* [PAGINATION 3/3] teks "Menampilkan x-y dari z" + tombol halaman */ ?>
     <?= view('App\Modules\Shared\Views\Components\pagination', ['pager' => $pager]) ?>
 </div>
 

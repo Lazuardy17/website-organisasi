@@ -1,6 +1,7 @@
 <?= $this->extend('App\Modules\Shared\Views\Layouts\Layout_admin') ?>
 
 <?= $this->section('content') ?>
+<div class="halaman-detail-verifikasi">
 
 <div class="page-header">
     <h1>Detail Penilaian</h1>
@@ -33,7 +34,7 @@
         <div class="variabel-item">
             <div class="variabel-header">
                 <div>
-                    <span class="variabel-name"><?= esc($d['nama_variabel']) ?></span>
+                    <span class="variabel-name"><?= esc($d['nomor_urutan']) ?>. <?= esc($d['nama_variabel']) ?></span>
                     <span class="variabel-tingkat"><?= esc($d['nama_tingkat']) ?></span>
                 </div>
                 <span class="variabel-skor">Skor: <?= number_format($d['nilai_skor'], 0) ?></span>
@@ -126,4 +127,5 @@
         });
     });
 </script>
+</div>
 <?= $this->endSection() ?>

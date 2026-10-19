@@ -14,54 +14,71 @@
     <div class="alert alert-error"><?= session()->getFlashdata('error') ?></div>
 <?php endif; ?>
 
-<?php if (empty($daftar)): ?>
-    <div class="alert alert-info">Belum ada penilaian yang menunggu verifikasi.</div>
-<?php else: ?>
-    <?php $nomorAwal = ($pager->getCurrentPage() - 1) * $pager->getPerPage(); ?>
-    <?php
-    // Alamat halaman ini (beserta filter & nomor halaman) untuk tombol "Kembali" di halaman detail
-    $qs      = service('request')->getUri()->getQuery();
-    $kembali = '/' . uri_string() . ($qs !== '' ? '?' . $qs : '');
-    ?>
-    <div class="card card-wide">
-        <div class="table-responsive">
-            <table>
-                <thead>
+<?php /* [PAGINATION 1/3] nomor awal halaman ini (halaman 2 mulai dari 11, dst.) */ ?>
+<?php $nomorAwal = ($pager->getCurrentPage() - 1) * $pager->getPerPage(); ?>
+<?php
+// Alamat halaman ini (beserta filter & nomor halaman) untuk tombol "Kembali" di halaman detail
+$qs      = service('request')->getUri()->getQuery();
+$kembali = '/' . uri_string() . ($qs !== '' ? '?' . $qs : '');
+?>
+
+<div class="card card-wide">
+    <div class="table-responsive">
+        <table style="table-layout: fixed; width: 100%;">
+            <colgroup>
+                <col style="width: 5%;">    <!-- No -->
+                <col style="width: 27%;">   <!-- Nama OPD -->
+                <col style="width: 17%;">   <!-- Tanggal Submit -->
+                <col style="width: 9%;">    <!-- Total Skor -->
+                <col style="width: 13%;">   <!-- Predikat -->
+                <col style="width: 16%;">   <!-- Status -->
+                <col style="width: 13%;">   <!-- Aksi -->
+            </colgroup>
+            <thead>
+                <tr>
+                    <th style="text-align: center;">No</th>
+                    <th style="text-align: center;">Nama OPD</th>
+                    <th style="text-align: center;">Tanggal Submit</th>
+                    <th style="text-align: center;">Skor</th>
+                    <th style="text-align: center;">Predikat</th>
+                    <th style="text-align: center;">Status</th>
+                    <th style="text-align: center;">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (empty($daftar)): ?>
                     <tr>
-                        <th style="width: 50px;">No</th>
-                        <th>Nama OPD</th>
-                        <th style="width: 100px;">Periode</th>
-                        <th style="width: 160px;">Tanggal Submit</th>
-                        <th style="width: 100px;">Total Skor</th>
-                        <th style="width: 140px;">Status</th>
-                        <th style="width: 130px; text-align: center;">Aksi</th>
+                        <td colspan="7" class="empty-row">
+                            Belum ada penilaian yang menunggu verifikasi.
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
+                <?php else: ?>
                     <?php foreach ($daftar as $i => $d): ?>
                         <tr>
-                            <td><?= $nomorAwal + $i + 1 ?></td>
-                            <td class="col-nama"><?= esc($d['nama_opd']) ?></td>
-                            <td><?= esc($d['tahun_periode']) ?></td>
-                            <td><?= $d['diajukan_pada'] ? date('d M Y H:i', strtotime($d['diajukan_pada'])) : '-' ?></td>
-                            <td><?= number_format($d['total_skor'], 0) ?></td>
-                            <td>
+                            <?php /* [PAGINATION 2/3] nomor urut berlanjut antar halaman */ ?>
+                            <td style="text-align: center;"><?= $nomorAwal + $i + 1 ?></td>
+                            <td class="col-nama"><?= esc($d['nama_opd'] ?? '-') ?></td>
+                            <td style="text-align: center;"><?= tanggal_indonesia($d['diajukan_pada'], true) ?></td>
+                            <td style="text-align: center;"><?= number_format($d['total_skor'], 0) ?></td>
+                            <td style="text-align: center;"><?= esc($d['kesimpulan'] ?: '-') ?></td>
+                            <td style="text-align: center;">
                                 <span class="badge <?= $d['status'] === 'DIKIRIM' ? 'badge-submitted' : 'badge-verif-ulang' ?>">
-                                    <?= esc($d['status']) ?>
+                                    <?= esc(str_replace('_', ' ', $d['status'])) ?>
                                 </span>
                             </td>
-                            <td class="col-aksi">
-                                <a href="<?= base_url('/admin/verifikasi/detail/' . $d['id']) . '?kembali=' . urlencode($kembali) ?>" class="btn btn-primary">
-                                    Lihat Detail
+                            <td style="text-align: center;">
+                                <a href="<?= base_url('/admin/verifikasi/detail/' . $d['id']) . '?kembali=' . urlencode($kembali) ?>" class="btn btn-primary">Lihat Detail
                                 </a>
                             </td>
                         </tr>
                     <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
-        <?= view('App\Modules\Shared\Views\Components\pagination', ['pager' => $pager]) ?>
+                <?php endif; ?>
+            </tbody>
+        </table>
     </div>
-<?php endif; ?>
+
+    <?php /* [PAGINATION 3/3] teks "Menampilkan x-y dari z" + tombol halaman */ ?>
+    <?= view('App\Modules\Shared\Views\Components\pagination', ['pager' => $pager]) ?>
+</div>
 
 <?= $this->endSection() ?>

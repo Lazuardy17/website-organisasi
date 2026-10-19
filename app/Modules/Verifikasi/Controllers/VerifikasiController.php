@@ -33,10 +33,8 @@ class VerifikasiController extends BaseController
             ->select('penilaian.*, 
                       perangkat_daerah.nama as nama_opd, 
                       perangkat_daerah.kode as kode_opd,
-                      perangkat_daerah.nama_kepala,
-                      periode_penilaian.tahun as tahun_periode')
+                      perangkat_daerah.nama_kepala')
             ->join('perangkat_daerah', 'perangkat_daerah.id = penilaian.opd_id', 'left')
-            ->join('periode_penilaian', 'periode_penilaian.id = penilaian.periode_id', 'left')
             ->whereIn('penilaian.status', ['DIKIRIM', 'PERLU_VERIFIKASI_ULANG'])
             ->orderBy('penilaian.diajukan_pada', 'ASC')
             ->orderBy('penilaian.id', 'ASC')   // urutan kedua agar halaman stabil

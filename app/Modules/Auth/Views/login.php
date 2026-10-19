@@ -62,7 +62,7 @@
                     </div>
                 <?php endif; ?>
 
-                <form action="<?= base_url('/login/attempt') ?>" method="post">
+                <form action="<?= base_url('/login/attempt') ?>" method="post"> // tambahkan encryption
                     <?= csrf_field() ?>
 
                     <div class="mb-3">
@@ -75,11 +75,12 @@
                                value="<?= session()->getFlashdata('username') ?? '' ?>"    <!-- Preserve -->
                                required
                                autofocus>
+                               // batasi input hanya untuk huruf dan angka
                     </div>
 
                     <div class="mb-4">
                         <label for="password" class="form-label">Password</label>
-                        <input type="password" name="password" id="password" class="form-control" placeholder="Masukkan Password" required>
+                        <input type="password" name="password" id="password" class="form-control" placeholder="Masukkan Password" required> // batasi input hanya untuk huruf, angka, dan simbol tertentu
                     </div>
 
                     <button type="submit" class="btn btn-login">Masuk</button>

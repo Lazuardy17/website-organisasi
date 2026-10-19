@@ -21,6 +21,14 @@
         </div>
 
         <div class="form-group">
+            <label for="nomenklatur_jabatan">Jabatan</label>
+            <input type="text" name="nomenklatur_jabatan" id="nomenklatur_jabatan"
+                   class="form-control"
+                   value="<?= old('nomenklatur_jabatan', $akun['nomenklatur_jabatan'] ?? '') ?>"
+                   required>
+        </div>
+
+        <div class="form-group">
             <label for="nama_pengguna">Username</label>
             <input type="text" name="nama_pengguna" id="nama_pengguna"
                    class="form-control"

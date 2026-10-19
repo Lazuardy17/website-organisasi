@@ -23,7 +23,7 @@ class AdminSeeder extends Seeder
                 'peran_id'         => $peranAdmin->id,
                 'opd_id'           => null, // Admin tidak terikat OPD
                 'nama_pengguna'    => 'admin',
-                'hash_kata_sandi'  => password_hash('admin123', PASSWORD_DEFAULT),
+                'hash_kata_sandi'  => password_hash('', PASSWORD_DEFAULT),
                 'alamat_surel'     => 'admin@banjarbaru.go.id',
                 'status'           => 'AKTIF',
                 'dibuat_pada'      => date('Y-m-d H:i:s'),

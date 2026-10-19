@@ -15,6 +15,20 @@ class RekapitulasiController extends BaseController
         $periodeId = $this->request->getGet('periode_id');
         $status    = $this->request->getGet('status');
 
+        // Urutan tabel. Hanya kolom di daftar ini yang diterima (whitelist),
+        // jadi nilai dari URL tidak pernah masuk mentah ke query.
+        $pilihanUrut = [
+            'id_opd'    => 'perangkat_daerah.id',
+            'skor'      => 'penilaian.total_skor',
+            'perubahan' => 'COALESCE(penilaian.diperbarui_pada, penilaian.dibuat_pada)',
+        ];
+        $urutkan = $this->request->getGet('urutkan');
+        if (!is_string($urutkan) || !isset($pilihanUrut[$urutkan])) {
+            $urutkan = 'id_opd';
+        }
+        $arahGet = $this->request->getGet('arah');
+        $arah    = (is_string($arahGet) && strtolower($arahGet) === 'desc') ? 'desc' : 'asc';
+
         // Ambil daftar periode untuk dropdown
         $periodeList = $db->table('periode_penilaian')
             ->orderBy('tahun', 'DESC')
@@ -51,9 +65,15 @@ class RekapitulasiController extends BaseController
               ->join('perangkat_daerah', 'perangkat_daerah.id = penilaian.opd_id', 'left')
               ->join('periode_penilaian', 'periode_penilaian.id = penilaian.periode_id', 'left');
 
+        // Urut berdasarkan skor: yang belum punya skor (NULL) selalu di bawah, apa pun arahnya
+        if ($urutkan === 'skor') {
+            $model->orderBy('penilaian.total_skor IS NULL', 'ASC', false);
+        }
+
         $daftar = $terapkanFilter($model)
-            ->orderBy('perangkat_daerah.id', 'ASC')
-            ->orderBy('penilaian.id', 'ASC')   // urutan kedua agar halaman stabil
+            ->orderBy($pilihanUrut[$urutkan], strtoupper($arah), false)
+            ->orderBy('perangkat_daerah.id', 'ASC')   // urutan kedua & ketiga agar halaman stabil
+            ->orderBy('penilaian.id', 'ASC')
             ->paginate(10);
 
         // Statistik ringkasan: dihitung dari SELURUH data yang lolos filter,
@@ -81,6 +101,8 @@ class RekapitulasiController extends BaseController
             'periodeList'        => $periodeList,
             'periodeId'          => $periodeId,
             'statusFilter'       => $status ?: 'semua',
+            'urutkan'            => $urutkan,
+            'arah'               => $arah,
             'totalDinilai'       => $totalDinilai,
             'jumlahTerverifikasi' => $jumlahTerverifikasi,
             'jumlahMenunggu'     => $jumlahMenunggu,

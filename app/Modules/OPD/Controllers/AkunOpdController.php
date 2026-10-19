@@ -161,7 +161,7 @@ class AkunOpdController extends BaseController
     public function edit($id)
     {
         $akun = $this->akunModel
-            ->select('pengguna.*, perangkat_daerah.nama as nama_opd, perangkat_daerah.kode as kode_opd, perangkat_daerah.nama_kepala, perangkat_daerah.nip_kepala, perangkat_daerah.pangkat_kepala')
+            ->select('pengguna.*, perangkat_daerah.nama as nama_opd, perangkat_daerah.kode as kode_opd, perangkat_daerah.nama_kepala, perangkat_daerah.nip_kepala, perangkat_daerah.pangkat_kepala, perangkat_daerah.nomenklatur_jabatan')
             ->join('perangkat_daerah', 'perangkat_daerah.id = pengguna.opd_id', 'left')
             ->where('pengguna.id', $id)
             ->first();
@@ -184,13 +184,14 @@ class AkunOpdController extends BaseController
             return redirect()->to('/admin/akun-opd')->with('error', 'Akun tidak ditemukan.');
         }
 
-        $namaPengguna  = trim($this->request->getPost('nama_pengguna'));
-        $namaOpd       = trim($this->request->getPost('nama_opd'));
-        $nipKepala     = $this->request->getPost('nip_kepala');
-        $namaKepala    = $this->request->getPost('nama_kepala');
-        $pangkatKepala = $this->request->getPost('pangkat_kepala');
-        $password      = $this->request->getPost('password');
-        $konfirmasi    = $this->request->getPost('konfirmasi');
+        $namaPengguna       = trim($this->request->getPost('nama_pengguna'));
+        $namaOpd            = trim($this->request->getPost('nama_opd'));
+        $nomenklaturJabatan = trim($this->request->getPost('nomenklatur_jabatan'));
+        $nipKepala          = trim($this->request->getPost('nip_kepala'));
+        $namaKepala         = trim($this->request->getPost('nama_kepala'));
+        $pangkatKepala      = trim($this->request->getPost('pangkat_kepala'));
+        $password           = $this->request->getPost('password');
+        $konfirmasi         = $this->request->getPost('konfirmasi');
 
         // Validasi
         if (empty($namaPengguna)) {
@@ -226,11 +227,12 @@ class AkunOpdController extends BaseController
             $db->table('perangkat_daerah')
                 ->where('id', $akun['opd_id'])
                 ->update([
-                    'nama'            => $namaOpd,
-                    'nip_kepala'      => $nipKepala ?: null,
-                    'nama_kepala'     => $namaKepala ?: null,
-                    'pangkat_kepala'  => $pangkatKepala ?: null,
-                    'diperbarui_pada' => date('Y-m-d H:i:s'),
+                    'nama'                => $namaOpd,
+                    'nomenklatur_jabatan' => $nomenklaturJabatan ?: null,
+                    'nip_kepala'          => $nipKepala ?: null,
+                    'nama_kepala'         => $namaKepala ?: null,
+                    'pangkat_kepala'      => $pangkatKepala ?: null,
+                    'diperbarui_pada'     => date('Y-m-d H:i:s'),
                 ]);
         }
 

@@ -87,8 +87,8 @@ $kembali = '/' . uri_string() . ($qs !== '' ? '?' . $qs : '');
 
         <div class="filter-group">
             <select name="arah" id="arah" aria-label="Arah urutan" onchange="this.form.submit()" style="min-width: 140px;">
-                <option value="asc" <?= $arah === 'asc' ? 'selected' : '' ?>>Menaik</option>
-                <option value="desc" <?= $arah === 'desc' ? 'selected' : '' ?>>Menurun</option>
+                <option value="asc" <?= $arah === 'asc' ? 'selected' : '' ?>>Naik</option>
+                <option value="desc" <?= $arah === 'desc' ? 'selected' : '' ?>>Turun</option>
             </select>
         </div>
 

@@ -185,7 +185,7 @@
 
             setTimeout(function () {
                 if (notif.parentNode) notif.remove();
-            }, 2500);
+            }, 2500); // notifikasi hilang otomatis setelah 2,5 detik
         }
     </script>
 <?php endif; ?>

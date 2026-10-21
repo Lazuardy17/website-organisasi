@@ -874,6 +874,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/js/bootstrap.bundle.min.js"></script>
 
     <?= $this->renderSection('scripts') ?>
+    <?= view('App\Modules\Shared\Views\Components\alert_close') ?>
 </body>
 
 </html>

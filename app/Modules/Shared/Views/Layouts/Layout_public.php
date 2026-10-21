@@ -336,6 +336,7 @@
             }
         }
     </script>
+    <?= view('App\Modules\Shared\Views\Components\alert_close') ?>
 </body>
 
 </html>

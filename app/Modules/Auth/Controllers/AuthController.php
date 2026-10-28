@@ -7,6 +7,12 @@ use App\Modules\Auth\Models\UserModel;
 
 class AuthController extends BaseController
 {
+    /** Batas percobaan gagal sebelum akun dikunci. */
+    private const MAKS_GAGAL = 5;
+
+    /** Lama cooldown dalam detik (900 = 15 menit). */
+    private const DURASI_KUNCI = 900;
+
     protected $userModel;
 
     public function __construct()
@@ -50,28 +56,46 @@ class AuthController extends BaseController
 
     public function attemptLogin()
     {
-        $username = $this->request->getPost('username');
-        $password = $this->request->getPost('password');
+        $username = trim((string) $this->request->getPost('username'));
+        $password = (string) $this->request->getPost('password');
 
-        if (empty($username) || empty($password)) {
+        if ($username === '' || $password === '') {
             return redirect()->to('/')
                 ->with('error', 'Username dan password wajib diisi.')
                 ->with('username', $username);
         }
 
+        $kunci = strtolower($username);
+        $ip    = $this->request->getIPAddress();
+
+        // 1. Sedang dalam masa cooldown?
+        $sisaDetik = $this->sisaKunci($kunci, $ip);
+        if ($sisaDetik > 0) {
+            return redirect()->to('/')
+                ->with('error', 'Terlalu banyak percobaan gagal. Coba lagi dalam ' . ceil($sisaDetik / 60) . ' menit.')
+                ->with('username', $username);
+        }
+
+        // 2. Verifikasi kredensial.
+        //    Username yang tidak ada juga dihitung sebagai percobaan gagal,
+        //    dan pesannya sengaja sama agar username valid tidak bisa ditebak.
         $user = $this->userModel->findByUsername($username);
 
-        if (!$user) {
+        if (!$user || !password_verify($password, $user['hash_kata_sandi'])) {
+            $sisa = $this->catatGagal($kunci, $ip);
+
+            $pesan = $sisa > 0
+                ? 'Username atau password salah.'
+                : 'Terlalu banyak percobaan gagal. Coba lagi dalam ' . (self::DURASI_KUNCI / 60) . ' menit.';
+
             return redirect()->to('/')
-                ->with('error', 'Username atau password salah.')
+                ->with('error', $pesan)
                 ->with('username', $username);
         }
 
-        if (!password_verify($password, $user['hash_kata_sandi'])) {
-            return redirect()->to('/')
-                ->with('error', 'Username atau password salah.')
-                ->with('username', $username);
-        }
+        // 3. Berhasil: reset hitungan & ganti ID session (cegah session fixation)
+        $this->resetPercobaan($kunci, $ip);
+        session()->regenerate();
 
         // Set session dasar
         session()->set([
@@ -113,6 +137,79 @@ class AuthController extends BaseController
     {
         session()->destroy();
         return redirect()->to('/');
+    }
+
+    /* =========================================================
+     * PEMBATASAN PERCOBAAN LOGIN
+     * Tabel: percobaan_login
+     * ========================================================= */
+
+    /**
+     * Sisa detik masa cooldown. 0 = tidak sedang dikunci.
+     */
+    private function sisaKunci(string $kunci, string $ip): int
+    {
+        $row = \Config\Database::connect()->table('percobaan_login')
+            ->where('nama_pengguna', $kunci)
+            ->where('alamat_ip', $ip)
+            ->get()->getRowArray();
+
+        if (!$row || empty($row['terkunci_sampai'])) {
+            return 0;
+        }
+
+        return max(0, strtotime($row['terkunci_sampai']) - time());
+    }
+
+    /**
+     * Catat satu percobaan gagal.
+     * Mengembalikan sisa percobaan (0 = baru saja terkunci).
+     */
+    private function catatGagal(string $kunci, string $ip): int
+    {
+        $db  = \Config\Database::connect();
+        $now = date('Y-m-d H:i:s');
+
+        $row = $db->table('percobaan_login')
+            ->where('nama_pengguna', $kunci)
+            ->where('alamat_ip', $ip)
+            ->get()->getRowArray();
+
+        $jumlah      = ($row ? (int) $row['jumlah_gagal'] : 0) + 1;
+        $kunciSampai = null;
+
+        if ($jumlah >= self::MAKS_GAGAL) {
+            $kunciSampai = date('Y-m-d H:i:s', time() + self::DURASI_KUNCI);
+            $jumlah      = 0; // setelah cooldown, hitungan mulai dari 0 lagi
+        }
+
+        $data = [
+            'jumlah_gagal'       => $jumlah,
+            'terkunci_sampai'    => $kunciSampai,
+            'percobaan_terakhir' => $now,
+        ];
+
+        if ($row) {
+            $db->table('percobaan_login')->where('id', $row['id'])->update($data);
+        } else {
+            $db->table('percobaan_login')->insert($data + [
+                'nama_pengguna' => $kunci,
+                'alamat_ip'     => $ip,
+            ]);
+        }
+
+        return $kunciSampai ? 0 : self::MAKS_GAGAL - $jumlah;
+    }
+
+    /**
+     * Hapus catatan percobaan setelah login berhasil.
+     */
+    private function resetPercobaan(string $kunci, string $ip): void
+    {
+        \Config\Database::connect()->table('percobaan_login')
+            ->where('nama_pengguna', $kunci)
+            ->where('alamat_ip', $ip)
+            ->delete();
     }
 
     /* =========================================================

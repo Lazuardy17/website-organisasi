@@ -34,6 +34,7 @@
             <label for="opd_id">Cakupan OPD</label>
             <select name="opd_id" id="opd_id" class="form-control" onchange="toggleFormat()" required>
                 <option value="semua">Semua OPD</option>
+                <option value="terverifikasi">Semua OPD Terverifikasi</option>
                 <?php foreach ($opdList as $o): ?>
                     <option value="<?= $o['id'] ?>">
                         <?= esc($o['nama']) ?>
@@ -87,7 +88,7 @@ function toggleFormat() {
     const opd = document.getElementById('opd_id').value;
     const grupFormat = document.getElementById('grup-format');
 
-    if (opd === 'semua') {
+    if (opd === 'semua' || opd === 'terverifikasi') {
         grupFormat.style.display = 'none';
     } else {
         grupFormat.style.display = 'block';

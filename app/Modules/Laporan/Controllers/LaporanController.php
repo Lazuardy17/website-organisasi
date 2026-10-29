@@ -56,6 +56,39 @@ class LaporanController extends BaseController
             return redirect()->back()->with('error', 'Periode tidak ditemukan.');
         }
 
+        // ================= SEMUA OPD TERVERIFIKASI =================
+        // Hanya penilaian berstatus TERVERIFIKASI pada periode ini.
+        // Template: No. | Nama OPD | Hasil Akhir | Opini
+        if ($opdId === 'terverifikasi') {
+            $daftar = $db->table('penilaian')
+                ->select('perangkat_daerah.id AS opd_id,
+                          perangkat_daerah.nama AS nama_opd,
+                          penilaian.total_skor,
+                          penilaian.kesimpulan')
+                ->join('perangkat_daerah', 'perangkat_daerah.id = penilaian.opd_id')
+                ->where('penilaian.periode_id', $periodeId)
+                ->where('penilaian.status', 'TERVERIFIKASI')
+                ->orderBy('perangkat_daerah.id', 'ASC')
+                ->get()->getResultArray();
+
+            if (empty($daftar)) {
+                return redirect()->back()->with('error', 'Belum ada OPD yang terverifikasi pada periode ini.');
+            }
+
+            $html = view('App\\Modules\\Laporan\\Views\\admin_pdf_terverifikasi', [
+                'periode' => $periode,
+                'daftar'  => $daftar,
+            ]);
+
+            $pdf      = $this->renderPdf($html, 'portrait');
+            $namaFile = 'laporan-opd-terverifikasi-' . $periode['tahun'] . '.pdf';
+
+            return $this->response
+                ->setHeader('Content-Type', 'application/pdf')
+                ->setHeader('Content-Disposition', 'attachment; filename="' . $namaFile . '"')
+                ->setBody($pdf);
+        }
+
         // ======================== SEMUA OPD ========================
         if ($opdId === 'semua') {
             // Semua OPD aktif, apa pun status penilaiannya. OPD yang belum punya

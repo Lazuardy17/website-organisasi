@@ -140,7 +140,7 @@ $kembali = '/' . uri_string() . ($qs !== '' ? '?' . $qs : '');
                             <td style="text-align: center;"><?= $nomorAwal + $i + 1 ?></td>
                             <td class="col-nama"><?= esc($d['nama_opd'] ?? '-') ?></td>
                             <td style="text-align: center;"><?= tanggal_indonesia($d['diajukan_pada']) ?></td>
-                            <td style="text-align: center;"><?= tanggal_indonesia($d['diperbarui_pada'] ?: $d['dibuat_pada'], true) ?></td>
+                            <td style="text-align: center;"><?= tanggal_indonesia($d['diperbarui_pada'] ?: $d['dibuat_pada']) ?></td>
                             <td class="skor" style="text-align: center;"><?= $d['total_skor'] > 0 ? number_format($d['total_skor'], 0) : '-' ?></td>
                             <td style="text-align: center;"><?= esc($d['kesimpulan'] ?: '-') ?></td>
                             <td style="text-align: center;">

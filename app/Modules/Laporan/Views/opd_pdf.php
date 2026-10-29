@@ -126,7 +126,7 @@ $ttd = function (callable $p, callable $l, float $rowH, float $marginLeft) use (
     .t4 .c2 { width: <?= $W4(306.6) ?>; }
     .t4 .c3 { width: <?= $W4(112.9) ?>; }
     .t4 .c4 { width: <?= $W4(80.6) ?>; }
-    .t4 th { background: #FFFF00; text-align: center; white-space: nowrap; height: <?= $p4(32.9 + $ADJ_ROW4) ?>; line-height: <?= $l4(32.9 + $ADJ_ROW4) ?>; }
+    .t4 th { background: #FFFF00; text-align: center; white-space: nowrap; height: <?= $p4(32.9 + $ADJ_ROW4) ?>; line-height: normal; }
     .t4 td.nb { border: none; }
     .t4 td.rt { text-align: right; }
     .ttl4 { margin-left: <?= $p4(51.2) ?>; width: <?= $p4(570.3) ?>; text-align: center; font-weight: bold;

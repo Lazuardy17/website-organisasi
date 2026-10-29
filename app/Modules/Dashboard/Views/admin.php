@@ -64,7 +64,7 @@
                             <td style="text-align: center;"><?= $i + 1 ?></td>
                             <td class="col-nama"><?= esc($a['nama_opd'] ?? '-') ?></td>
                             <td style="text-align: center;">
-                                <?= $a['diajukan_pada'] ? tanggal_indonesia($a['diajukan_pada'], true) : '-' ?>
+                                <?= $a['diajukan_pada'] ? tanggal_indonesia($a['diajukan_pada']) : '-' ?>
                             </td>
                             <td style="text-align: center;"><?= number_format($a['total_skor'], 0) ?></td>
                             <td style="text-align: center;"><?= esc($a['kesimpulan'] ?: '-') ?></td>

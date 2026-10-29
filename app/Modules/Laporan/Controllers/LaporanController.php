@@ -58,23 +58,31 @@ class LaporanController extends BaseController
 
         // ======================== SEMUA OPD ========================
         if ($opdId === 'semua') {
-            $penilaianList = $db->table('penilaian')
-                ->select('penilaian.*, 
-                          perangkat_daerah.nama as nama_opd,
-                          perangkat_daerah.kode as kode_opd')
-                ->join('perangkat_daerah', 'perangkat_daerah.id = penilaian.opd_id', 'left')
-                ->where('penilaian.periode_id', $periodeId)
-                ->where('penilaian.status', 'TERVERIFIKASI')
+            // Semua OPD aktif, apa pun status penilaiannya. OPD yang belum punya
+            // penilaian pada periode ini tetap muncul (kolom penilaian kosong).
+            $daftar = $db->table('perangkat_daerah')
+                ->select('perangkat_daerah.id AS opd_id,
+                          perangkat_daerah.nama AS nama_opd,
+                          penilaian.id AS penilaian_id,
+                          penilaian.status,
+                          penilaian.total_skor,
+                          penilaian.kesimpulan,
+                          penilaian.diajukan_pada,
+                          penilaian.diperbarui_pada,
+                          penilaian.dibuat_pada')
+                ->join('penilaian', 'penilaian.opd_id = perangkat_daerah.id AND penilaian.periode_id = ' . (int) $periodeId, 'left')
+                ->where('perangkat_daerah.status', 'AKTIF')
                 ->orderBy('perangkat_daerah.id', 'ASC')
                 ->get()->getResultArray();
 
-            if (empty($penilaianList)) {
-                return redirect()->back()->with('error', 'Belum ada OPD dengan status TERVERIFIKASI pada periode ini.');
+            if (empty($daftar)) {
+                return redirect()->back()->with('error', 'Belum ada OPD aktif yang terdaftar.');
             }
 
-            $html = view('App\Modules\Laporan\Views\admin_pdf_semua', [
-                'periode'       => $periode,
-                'penilaianList' => $penilaianList,
+            $html = view('App\\Modules\\Laporan\\Views\\admin_pdf_semua', [
+                'periode'   => $periode,
+                'daftar'    => $daftar,
+                'orientasi' => 'portrait',
             ]);
 
             $pdf = $this->renderPdf($html, 'portrait');

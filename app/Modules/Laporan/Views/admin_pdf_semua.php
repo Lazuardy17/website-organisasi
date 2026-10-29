@@ -1,15 +1,26 @@
+<?php
+/**
+ * Laporan semua OPD — struktur kolom sama dengan halaman Rekapitulasi Data
+ * (tanpa kolom Aksi):  No | Nama OPD | Tanggal Submit | Perubahan Terakhir | Skor | Predikat | Status
+ *
+ * Variabel dari controller:
+ *   $periode  => baris periode_penilaian
+ *   $daftar   => semua OPD aktif (LEFT JOIN penilaian periode ini; OPD tanpa penilaian: kolom penilaian NULL)
+ */
+$orientasi = $orientasi ?? 'landscape';
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
 <title>Laporan Semua OPD</title>
 <style>
-    @page { size: letter portrait; margin: 0; }
-    html, body { margin: 0; padding: 0; }
-    body { font-family: 'XCalibri', sans-serif; color: #000; font-size: 9pt; }
-    .pg {
-        padding: 40pt 40pt 40pt 40pt;   /* atas kanan bawah kiri — semua 40pt */
-    }
+    /* Margin halaman asli (berlaku di SETIAP halaman, termasuk halaman lanjutan).
+       Jangan menambahkan "html, body { margin: 0 }" — itu menimpa margin @page di Dompdf. */
+    @page { size: letter <?= $orientasi ?>; margin: 40pt; }
+
+    body { font-family: 'XCalibri', sans-serif; color: #000; font-size: 10pt; }
+
     .ttl {
         text-align: center;
         font-weight: bold;
@@ -17,8 +28,7 @@
         margin-bottom: 16pt;
     }
     .ttl h1 { font-size: 11pt; margin: 0; }
-    .ttl h2 { font-size: 11pt; margin: 4pt 0; }
-    .ttl .periode { font-size: 10pt; margin-top: 8pt; font-weight: normal; }
+
     .tbl {
         width: 100%;
         border-collapse: collapse;
@@ -35,45 +45,43 @@
         font-weight: bold;
     }
     .tbl td.ctr { text-align: center; }
-    .footer {
-        margin-top: 24pt;
-        text-align: center;
-        font-size: 8pt;
-        color: #555;
-        border-top: 0.5pt solid #ccc;
-        padding-top: 8pt;
-    }
+    .tbl tr { page-break-inside: avoid; }
 </style>
 </head>
 <body>
 
-<div class="pg">
-    <div class="ttl">
-        <h1>LAPORAN HASIL PENILAIAN KEMATANGAN PERANGKAT DAERAH</h1>
-        <h1>KOTA BANJARBARU</h1>
-    </div>
-
-    <table class="tbl">
-        <thead>
-            <tr>
-                <th style="width: 8%;">No.</th>
-                <th style="width: 50%;">Nama OPD</th>
-                <th style="width: 18%;">Hasil Akhir</th>
-                <th style="width: 24%;">Opini</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($penilaianList as $i => $p): ?>
-                <tr>
-                    <td class="ctr"><?= $i + 1 ?></td>
-                    <td><?= esc($p['nama_opd']) ?></td>
-                    <td class="ctr"><?= number_format($p['total_skor'], 0) ?></td>
-                    <td class="ctr"><?= esc($p['kesimpulan'] ?? '-') ?></td>
-                </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+<div class="ttl">
+    <h1>LAPORAN HASIL PENILAIAN KEMATANGAN PERANGKAT DAERAH</h1>
+    <h1>KOTA BANJARBARU</h1>
 </div>
+
+<table class="tbl">
+    <thead>
+        <tr>
+            <th style="width: 5%;">No</th>
+            <th style="width: 31%;">Nama OPD</th>
+            <th style="width: 14%;">Tanggal Submit</th>
+            <th style="width: 14%;">Perubahan Terakhir</th>
+            <th style="width: 6%;">Skor</th>
+            <th style="width: 12%;">Predikat</th>
+            <th style="width: 15%;">Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($daftar as $i => $d): ?>
+            <?php $adaPenilaian = !empty($d['status']); ?>
+            <tr>
+                <td class="ctr"><?= $i + 1 ?></td>
+                <td><?= esc($d['nama_opd'] ?? '-') ?></td>
+                <td class="ctr"><?= tanggal_indonesia($d['diajukan_pada'] ?? null) ?></td>
+                <td class="ctr"><?= $adaPenilaian ? tanggal_indonesia(($d['diperbarui_pada'] ?? null) ?: ($d['dibuat_pada'] ?? null)) : '-' ?></td>
+                <td class="ctr"><?= ($d['total_skor'] ?? 0) > 0 ? number_format($d['total_skor'], 0) : '-' ?></td>
+                <td class="ctr"><?= esc(($d['kesimpulan'] ?? '') ?: '-') ?></td>
+                <td class="ctr"><?= $adaPenilaian ? esc(str_replace('_', ' ', $d['status'])) : 'BELUM MENGISI' ?></td>
+            </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
 
 </body>
 </html>

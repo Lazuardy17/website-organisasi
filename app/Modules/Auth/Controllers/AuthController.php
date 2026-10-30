@@ -7,8 +7,14 @@ use App\Modules\Auth\Models\UserModel;
 
 class AuthController extends BaseController
 {
-    /** Batas percobaan gagal sebelum akun dikunci. */
+    /** Batas gagal per akun (+ IP) sebelum dikunci. */
     private const MAKS_GAGAL = 5;
+
+    /** Batas gagal total dari satu IP (semua username) sebelum IP dikunci. */
+    private const MAKS_GAGAL_IP = 15;
+
+    /** Nilai nama_pengguna khusus untuk hitungan per IP. */
+    private const KUNCI_IP = '__ip__';
 
     /** Lama cooldown dalam detik (900 = 15 menit). */
     private const DURASI_KUNCI = 900;
@@ -65,11 +71,15 @@ class AuthController extends BaseController
                 ->with('username', $username);
         }
 
-        $kunci = strtolower($username);
+        $kunci = mb_substr(strtolower($username), 0, 100);
         $ip    = $this->request->getIPAddress();
 
-        // 1. Sedang dalam masa cooldown?
-        $sisaDetik = $this->sisaKunci($kunci, $ip);
+        // 1. Sedang dalam masa cooldown? (kunci akun ATAU kunci IP)
+        $sisaDetik = max(
+            $this->sisaKunci($kunci, $ip),
+            $this->sisaKunci(self::KUNCI_IP, $ip)
+        );
+
         if ($sisaDetik > 0) {
             return redirect()->to('/')
                 ->with('error', 'Terlalu banyak percobaan gagal. Coba lagi dalam ' . ceil($sisaDetik / 60) . ' menit.')
@@ -82,18 +92,21 @@ class AuthController extends BaseController
         $user = $this->userModel->findByUsername($username);
 
         if (!$user || !password_verify($password, $user['hash_kata_sandi'])) {
-            $sisa = $this->catatGagal($kunci, $ip);
+            $sisaIp = $this->catatGagal(self::KUNCI_IP, $ip, self::MAKS_GAGAL_IP);
+            $sisa   = $this->catatGagal($kunci, $ip, self::MAKS_GAGAL);
 
-            $pesan = $sisa > 0
-                ? 'Username atau password salah.'
-                : 'Terlalu banyak percobaan gagal. Coba lagi dalam ' . (self::DURASI_KUNCI / 60) . ' menit.';
+            $pesan = ($sisa > 0 && $sisaIp > 0)
+                ? 'Username atau password salah. Sisa percobaan: ' . $sisa . '.'
+                : 'Terlalu banyak percobaan gagal. Dikunci selama ' . (self::DURASI_KUNCI / 60) . ' menit.';
 
             return redirect()->to('/')
                 ->with('error', $pesan)
                 ->with('username', $username);
         }
 
-        // 3. Berhasil: reset hitungan & ganti ID session (cegah session fixation)
+        // 3. Berhasil: reset hitungan AKUN ini saja (hitungan IP sengaja
+        //    tidak direset agar tidak bisa dimanipulasi dengan login sah
+        //    di sela-sela tebakan), lalu ganti ID session.
         $this->resetPercobaan($kunci, $ip);
         session()->regenerate();
 
@@ -142,6 +155,8 @@ class AuthController extends BaseController
     /* =========================================================
      * PEMBATASAN PERCOBAAN LOGIN
      * Tabel: percobaan_login
+     * Baris akun : nama_pengguna = username (huruf kecil)
+     * Baris IP   : nama_pengguna = '__ip__'
      * ========================================================= */
 
     /**
@@ -165,7 +180,7 @@ class AuthController extends BaseController
      * Catat satu percobaan gagal.
      * Mengembalikan sisa percobaan (0 = baru saja terkunci).
      */
-    private function catatGagal(string $kunci, string $ip): int
+    private function catatGagal(string $kunci, string $ip, int $maks): int
     {
         $db  = \Config\Database::connect();
         $now = date('Y-m-d H:i:s');
@@ -178,7 +193,7 @@ class AuthController extends BaseController
         $jumlah      = ($row ? (int) $row['jumlah_gagal'] : 0) + 1;
         $kunciSampai = null;
 
-        if ($jumlah >= self::MAKS_GAGAL) {
+        if ($jumlah >= $maks) {
             $kunciSampai = date('Y-m-d H:i:s', time() + self::DURASI_KUNCI);
             $jumlah      = 0; // setelah cooldown, hitungan mulai dari 0 lagi
         }
@@ -198,11 +213,12 @@ class AuthController extends BaseController
             ]);
         }
 
-        return $kunciSampai ? 0 : self::MAKS_GAGAL - $jumlah;
+        return $kunciSampai ? 0 : $maks - $jumlah;
     }
 
     /**
-     * Hapus catatan percobaan setelah login berhasil.
+     * Hapus catatan percobaan AKUN setelah login berhasil.
+     * Catatan IP sengaja tidak dihapus.
      */
     private function resetPercobaan(string $kunci, string $ip): void
     {

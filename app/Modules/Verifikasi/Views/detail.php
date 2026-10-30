@@ -30,6 +30,12 @@
 <div class="card card-wide">
     <div class="section-title">Rincian Penilaian (<?= count($detail) ?>/11 variabel)</div>
 
+    <?php if (!empty($catatanUmumLama)): ?>
+        <div class="catatan-lama" style="margin-bottom: 16px;">
+            <i class="bi bi-exclamation-triangle" style="margin-right: 8px;"></i> <strong>Catatan Sebelumnya:</strong> <?= nl2br(esc($catatanUmumLama)) ?>
+        </div>
+    <?php endif; ?>
+
     <?php foreach ($detail as $d): ?>
         <div class="variabel-item">
             <div class="variabel-header">

@@ -82,6 +82,9 @@ class VerifikasiController extends BaseController
 
         $riwayat = $this->verifikasiModel->getByPenilaian($id);
 
+        // Catatan revisi keseluruhan dari permintaan revisi sebelumnya (kalau ada)
+        $catatanUmumLama = $this->verifikasiModel->getCatatanUmumTerakhir((int) $id);
+
         // Tujuan tombol "Kembali": halaman asal (Rekapitulasi / Verifikasi / Dashboard).
         // Hanya alamat internal yang diizinkan; selain itu kembali ke daftar verifikasi.
         $kembali = (string) $this->request->getGet('kembali');
@@ -94,6 +97,7 @@ class VerifikasiController extends BaseController
             'penilaian' => $penilaian,
             'detail'    => $detail,
             'riwayat'   => $riwayat,
+            'catatanUmumLama' => $catatanUmumLama,
             'kembali'   => $kembali,
         ];
 

@@ -9,9 +9,15 @@
     <div class="alert alert-info"><?= session()->getFlashdata('success') ?></div>
 <?php endif; ?>
 
-<?php if (!empty($catatan_admin)): ?>
+<?php if (!empty($catatan_umum) || !empty($catatan_admin)): ?>
     <div class="alert alert-warning">
-        <i class="bi bi-exclamation-triangle" style="margin-right: 8px;"></i> <strong>Ada catatan revisi dari Admin:</strong> Silakan perbaiki penilaian Anda.<br>
+        <i class="bi bi-exclamation-triangle" style="margin-right: 8px;"></i> <strong>Ada catatan revisi dari Admin:</strong>
+        <?php if (!empty($catatan_umum)): ?>
+            <?= nl2br(esc($catatan_umum)) ?>
+        <?php else: ?>
+            Silakan perbaiki penilaian Anda.
+        <?php endif; ?>
+        <br>
         <a href="<?= base_url('/opd/penilaian') ?>" style="color: #92400e; font-weight: 700;">
             Lihat & perbaiki sekarang <i class="bi bi-arrow-right"></i>
         </a>

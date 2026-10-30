@@ -61,6 +61,22 @@ class VerifikasiModel extends Model
     }
 
     /**
+     * Catatan revisi KESELURUHAN dari Admin (kolom verifikasi_penilaian.catatan)
+     * pada permintaan revisi terakhir. Mengembalikan teks catatan, atau null.
+     */
+    public function getCatatanUmumTerakhir(int $penilaianId): ?string
+    {
+        $row = $this->where('penilaian_id', $penilaianId)
+            ->where('keputusan', 'REVISION_REQUIRED')
+            ->orderBy('nomor_siklus', 'DESC')
+            ->first();
+
+        $catatan = trim((string) ($row['catatan'] ?? ''));
+
+        return $catatan !== '' ? $catatan : null;
+    }
+
+    /**
      * Simpan catatan revisi.
      */
     public function simpanCatatan(int $verifikasiId, ?int $detailId, string $catatan)

@@ -6,6 +6,7 @@ use App\Controllers\BaseController;
 use App\Modules\Penilaian\Models\PenilaianModel;
 use App\Modules\Penilaian\Models\DetailPenilaianModel;
 use App\Modules\Penilaian\Models\BuktiPenilaianModel;
+use App\Modules\Verifikasi\Models\VerifikasiModel;
 
 class PenilaianController extends BaseController
 {
@@ -72,6 +73,12 @@ class PenilaianController extends BaseController
         $terisi        = $this->detailModel->hitungVariabelTerisi($penilaian['id']);
         $tabAktif      = (int) ($this->request->getGet('tab') ?? 0);
 
+        // Catatan revisi keseluruhan dari Admin (hanya saat PERLU_REVISI)
+        $catatanUmum = null;
+        if ($penilaian['status'] === 'PERLU_REVISI') {
+            $catatanUmum = (new VerifikasiModel())->getCatatanUmumTerakhir((int) $penilaian['id']);
+        }
+
         $data = [
             'title'         => 'Pengisian Variabel',
             'penilaian'     => $penilaian,
@@ -80,6 +87,7 @@ class PenilaianController extends BaseController
             'totalVariabel' => $totalVariabel,
             'terisi'        => $terisi,
             'tabAktif'      => $tabAktif,
+            'catatanUmum'   => $catatanUmum,
         ];
 
         return view('App\Modules\Penilaian\Views\form', $data);

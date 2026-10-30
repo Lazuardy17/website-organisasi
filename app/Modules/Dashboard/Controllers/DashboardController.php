@@ -61,6 +61,7 @@ class DashboardController extends BaseController
         $statusPenilaian = 'BELUM MULAI';
         $skor            = null;
         $catatanAdmin    = [];
+        $catatanUmum     = null;
 
         if ($periode) {
             // Ambil penilaian OPD ini
@@ -93,6 +94,13 @@ class DashboardController extends BaseController
                     ->where('status', 'TERBUKA')
                     ->orderBy('dibuat_pada', 'DESC')
                     ->get()->getResultArray();
+
+                // Catatan revisi keseluruhan dari Admin: hanya selama status PERLU_REVISI
+                // (hilang otomatis setelah OPD submit ulang)
+                if ($penilaian['status'] === 'PERLU_REVISI') {
+                    $catatanUmum = (new \App\Modules\Verifikasi\Models\VerifikasiModel())
+                        ->getCatatanUmumTerakhir((int) $penilaian['id']);
+                }
             }
         }
 
@@ -106,6 +114,7 @@ class DashboardController extends BaseController
             'status'          => $statusPenilaian,
             'skor'            => $skor,
             'catatan_admin'   => $catatanAdmin,
+            'catatan_umum'    => $catatanUmum,
         ];
 
         return view('App\Modules\Dashboard\Views\user', $data);

@@ -20,6 +20,9 @@
     <div class="alert alert-warning">
         <i class="bi bi-exclamation-triangle" style="margin-right: 8px;"></i> Penilaian Anda sedang dalam status <strong>PERLU REVISI.</strong>
         Silakan perbaiki variabel yang ditandai, lalu submit ulang.
+        <?php if (!empty($catatanUmum)): ?>
+            <br><strong>Catatan revisi dari Admin:</strong> <?= nl2br(esc($catatanUmum)) ?>
+        <?php endif; ?>
     </div>
 <?php endif; ?>
 
